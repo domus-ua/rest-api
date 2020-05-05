@@ -16,7 +16,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @date 05/05/20
  * @time 21
  */
-
 @Configuration
 @EnableSwagger2
 public class Swagger2Config {
@@ -30,6 +29,9 @@ public class Swagger2Config {
     }
 
 
+    /**
+     * @return Swagger 2 Documentation Info.
+     */
     private ApiInfo apiEndPointsInfo() {
         return new ApiInfoBuilder().title("Domus REST API")
                 .description("Domus endpoints REST API")
