@@ -12,7 +12,6 @@ stages:
       -Dsonar.login=$SONAR_TOKEN -Dsonar.organization=$ORGANIZATION
       -Dsonar.qualitygate.wait=true
       '-Dtest=!%regex[.*UI.*]'
-  allow_failure: true
   only:
     - master
 
