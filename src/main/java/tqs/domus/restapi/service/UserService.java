@@ -9,6 +9,8 @@ import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.UserRepository;
 
+import java.util.Calendar;
+
 /**
  * @author Vasco Ramos
  * @date 06/mai/2020
@@ -28,6 +30,12 @@ public class UserService {
 		String encodedPassword = new BCryptPasswordEncoder().encode(userDTO.getPassword());
 		userDTO.setPassword(encodedPassword);
 		User user = new ModelMapper().map(userDTO, User.class);
+		return repository.save(user);
+	}
+
+	public User getUserByEmail(String email) {
+		User user = repository.findByEmail(email);
+		user.setLastLogin(new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
 		return repository.save(user);
 	}
 }
