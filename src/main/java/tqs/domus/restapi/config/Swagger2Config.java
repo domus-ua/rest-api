@@ -15,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @date 05/05/20
  * @time 21
  */
+
 @Configuration
 @EnableSwagger2
 public class Swagger2Config {
@@ -22,7 +23,7 @@ public class Swagger2Config {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("tqs.domus.restapi"))
                 .paths(PathSelectors.any())
                 .build().apiInfo(apiEndPointsInfo());
     }

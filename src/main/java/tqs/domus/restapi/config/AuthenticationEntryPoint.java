@@ -14,6 +14,7 @@ import java.io.PrintWriter;
  * @date 05/05/20
  * @time 22
  */
+
 @Component
 public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
 
