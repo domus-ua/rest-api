@@ -1,6 +1,5 @@
 package tqs.domus.restapi.service;
 
-import org.dom4j.rule.Mode;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +22,7 @@ public class UserService {
 
 	public User registerUser(UserDTO userDTO) throws ErrorDetails {
 		if (repository.existsByEmail(userDTO.getEmail())) {
-			throw new ErrorDetails("There is already a userDTO with that email");
+			throw new ErrorDetails("There is already a user with that email");
 		}
 
 		String encodedPassword = new BCryptPasswordEncoder().encode(userDTO.getPassword());

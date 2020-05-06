@@ -29,10 +29,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 			"/configuration/security",
 			"/swagger-ui.html",
 			"/webjars/**",
-			"/companies-reg",
-			"/registration",
-			"/internal_registration",
-			"/logs"
+			"/",
+			"/csrf",
+			"/users"
 	};
 
 	@Autowired
@@ -41,23 +40,16 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
 
-	/**
-	 * @param auth Authentication manage builder.
-	 * @throws Exception
-	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
 	}
 
-	/**
-	 * @param http HTTP security wrapper.
-	 * @throws Exception
-	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().authorizeRequests()
 				.antMatchers(AUTH_WHITELIST).permitAll()
+				.anyRequest().authenticated()
 				.and().httpBasic()
 				.authenticationEntryPoint(authEntryPoint);
 	}
