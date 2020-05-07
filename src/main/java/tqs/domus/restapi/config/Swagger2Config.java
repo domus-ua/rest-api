@@ -19,27 +19,24 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class Swagger2Config {
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("tqs.domus.restapi"))
-                .paths(PathSelectors.any())
-                .build().apiInfo(apiEndPointsInfo());
-    }
+	@Bean
+	public Docket api() {
+		return new Docket(DocumentationType.SWAGGER_2)
+				.select()
+				.apis(RequestHandlerSelectors.basePackage("tqs.domus.restapi"))
+				.paths(PathSelectors.any())
+				.build().apiInfo(apiEndPointsInfo());
+	}
 
 
-    /**
-     * @return Swagger 2 Documentation Info.
-     */
-    private ApiInfo apiEndPointsInfo() {
-        return new ApiInfoBuilder().title("Domus REST API")
-                .description("Domus endpoints REST API")
-                .license("Apache 2.0")
-                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
-                .version("1.0.0")
-                .build();
-    }
+	private ApiInfo apiEndPointsInfo() {
+		return new ApiInfoBuilder().title("Domus REST API")
+				.description("Domus endpoints REST API")
+				.license("Apache 2.0")
+				.licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
+				.version("1.0.0")
+				.build();
+	}
 
 }
 

@@ -1,7 +1,9 @@
 package tqs.domus.restapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
@@ -19,10 +21,12 @@ import java.sql.Timestamp;
  */
 
 @Entity
-@Data
+@Setter
+@Getter
 public class User implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Setter(AccessLevel.NONE)
 	private long id;
 
 	@NotNull
@@ -45,26 +49,9 @@ public class User implements Serializable {
 	private String role; // locador or locatário
 
 	@CreationTimestamp
+	@Setter(AccessLevel.NONE)
 	private Timestamp dateJoined;
 
-	@NotNull
-	private int isActive = 1; // default value to 1 ("active")
-
 	private Timestamp lastLogin;
-
-	public User() {
-	}
-
-	public User(long id, String email, String firstName, String lastName, String password, String phoneNumber,
-				String role, Timestamp lastLogin) {
-		this.id = id;
-		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.password = password;
-		this.phoneNumber = phoneNumber;
-		this.role = role;
-		this.lastLogin = lastLogin;
-	}
 }
 

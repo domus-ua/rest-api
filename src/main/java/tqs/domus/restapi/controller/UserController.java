@@ -23,9 +23,8 @@ public class UserController {
 	private UserService service;
 
 	@PostMapping("/users")
-	public User createUser(@Valid @RequestBody UserDTO user) throws ErrorDetails {
-		return service.registerUser(user);
+	public User createUser(@Valid @RequestBody UserDTO userDTO) throws ErrorDetails {
+		return service.registerUser(userDTO);
 	}
-
 
 }

@@ -12,13 +12,8 @@ import tqs.domus.restapi.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	/**
-	 * @param email
-	 * @return
-	 */
 	User findByEmail(String email);
 
-	Boolean existsByEmail(String email);
-
+	boolean existsByEmail(String email);
 }
 

@@ -4,16 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.model.User;
-import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.service.UserService;
 
-import javax.validation.Valid;
 import java.util.Base64;
 
 /**
@@ -30,10 +27,12 @@ public class AuthenticationController {
 	private UserService service;
 
 	@PostMapping("/login")
-	public ResponseEntity<User> login(@RequestHeader("Authorization") String auth) {
+	public ResponseEntity<User> login(@RequestHeader("Authorization") String auth) throws ErrorDetails {
 		String base64Credentials = auth.substring("Basic".length()).trim();
-		String email = new String(Base64.getDecoder().decode(base64Credentials)).split(":", 2)[0];
-		User user = service.getUserByEmail(email);
+		String[] credentials = new String(Base64.getDecoder().decode(base64Credentials)).split(":", 2);
+		String email = credentials[0];
+		String password = credentials[1];
+		User user = service.login(email, password);
 		return ResponseEntity.ok().body(user);
 	}
 
