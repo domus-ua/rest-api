@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.service.UserService;
@@ -58,6 +59,22 @@ public class UserControllerTest {
 				.andExpect(jsonPath("role", is(user.getRole())))
 				.andExpect(jsonPath("dateJoined", is(user.getDateJoined())))
 				.andExpect(jsonPath("lastLogin", is(user.getLastLogin())));
+
+		reset(service);
+	}
+
+	@Test
+	void testCreateUser_EmailIsTaken() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.registerUser(any(UserDTO.class))).willThrow(new ErrorDetails("Error"));
+
+		servlet.perform(post("/users")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
 
 		reset(service);
 	}
