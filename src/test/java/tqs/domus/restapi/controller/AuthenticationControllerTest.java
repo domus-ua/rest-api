@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.service.UserService;
@@ -36,7 +37,6 @@ public class AuthenticationControllerTest {
 	@MockBean
 	private UserService service;
 
-
 	@Test
 	void testLogin_ValidCredentials() throws Exception {
 		User user = new ModelMapper().map(userDTO, User.class);
@@ -53,9 +53,21 @@ public class AuthenticationControllerTest {
 	}
 
 	@Test
-	void testLogout() throws Exception {
-		servlet.perform(get("/users/logout")).andExpect(status().isOk());
+	void testLogin_InvalidCredentials() throws Exception {
+		String credentials ="non_existent@email.com:pwd";
+		String base64Credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
+
+		given(service.login(anyString(), anyString())).willThrow(new ErrorDetails("Error"));
+
+		servlet.perform(post("/users/login")
+				.header("Authorization", "Basic " + base64Credentials))
+				.andExpect(status().isBadRequest());
 
 		reset(service);
+	}
+
+	@Test
+	void testLogout() throws Exception {
+		servlet.perform(get("/users/logout")).andExpect(status().isOk());
 	}
 }
