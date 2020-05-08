@@ -1,0 +1,37 @@
+version: "3.3"
+
+services:
+  rest-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/domus?serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: domus
+      SPRING_DATASOURCE_PASSWORD: domus_2020
+    networks:
+      - backend
+
+  db:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: domus
+      MYSQL_USER: domus
+      MYSQL_PASSWORD: domus_2020
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - backend
+
+volumes:
+  db-data:
+
+networks:
+  backend:
