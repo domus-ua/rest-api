@@ -1,37 +1,44 @@
 version: "3.3"
 
+# Define services
 services:
-  rest-api:
+  # App backend service
+  app-server:
+    # Configuration for building the docker image for the backend service
     build:
-      context: .
+      context: ./ # Use an image built from the specified dockerfile in the `polling-app-server` directory.
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    restart: always
     depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/domus?serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: domus
-      SPRING_DATASOURCE_PASSWORD: domus_2020
-    networks:
+      - db # This service depends on mysql. Start that first.
+    environment: # Pass environment variables to the service
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/domus?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: springboot
+      SPRING_DATASOURCE_PASSWORD: domus_20
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - backend
 
+  # Database Service (Mysql)
   db:
-    image: mysql:latest
+    image: mysql:8
     ports:
       - "3307:3306"
     environment:
       MYSQL_DATABASE: domus
-      MYSQL_USER: domus
-      MYSQL_PASSWORD: domus_2020
+      MYSQL_USER: springboot
+      MYSQL_PASSWORD: domus_20
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - db-data:/var/lib/mysql
     networks:
       - backend
 
+# Volumes
 volumes:
   db-data:
 
+# Networks to be created to facilitate communication between containers
 networks:
   backend:
