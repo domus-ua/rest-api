@@ -16,14 +16,17 @@ public class UserDTO {
 	private String password;
 	private String phoneNumber;
 	private String role; // locador or locatário
+	private String sex;
 
-	public UserDTO(String email, String firstName, String lastName, String password, String phoneNumber, String role) {
+	public UserDTO(String email, String firstName, String lastName, String password, String phoneNumber, String role,
+				   String sex) {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
 		this.role = role;
+		this.sex = sex;
 	}
 }
 

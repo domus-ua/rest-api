@@ -71,6 +71,9 @@ public class User {
 	@JsonIgnore
 	private List<House> wishlist;
 
+	@NotNull
+	private boolean isVerified = false;
+
 	// TODO: missing rentals and reviews attributes
 
 	public boolean isLocador() {

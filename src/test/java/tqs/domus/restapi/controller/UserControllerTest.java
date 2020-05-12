@@ -32,7 +32,7 @@ public class UserControllerTest {
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
-	private UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+	private UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 
 	@Autowired
 	private MockMvc servlet;
@@ -58,7 +58,9 @@ public class UserControllerTest {
 				.andExpect(jsonPath("phoneNumber", is(user.getPhoneNumber())))
 				.andExpect(jsonPath("role", is(user.getRole())))
 				.andExpect(jsonPath("dateJoined", is(user.getDateJoined())))
-				.andExpect(jsonPath("lastLogin", is(user.getLastLogin())));
+				.andExpect(jsonPath("lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("sex", is(user.getSex())))
+				.andExpect(jsonPath("photo", is(user.getPhoto())));
 
 		reset(service);
 	}

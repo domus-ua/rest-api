@@ -42,7 +42,7 @@ public class UserServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		User user = new ModelMapper().map(userDTO, User.class);
 		when(repository.findByEmail(anyString())).thenAnswer(invocation -> {
 			Object arg = invocation.getArgument(0);
@@ -53,7 +53,7 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUser_emailIsTaken() {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		when(repository.existsByEmail(anyString())).thenReturn(true);
 		assertThrows(ErrorDetails.class, () -> {
 			service.registerUser(userDTO);
@@ -63,7 +63,7 @@ public class UserServiceTest {
 
 	@Test
 	void testRegisterUser_emailIsFree() throws ErrorDetails {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		when(repository.existsByEmail(anyString())).thenReturn(false);
 
 		User user = new ModelMapper().map(userDTO, User.class);
@@ -88,7 +88,7 @@ public class UserServiceTest {
 
 	@Test
 	void testLogin_ExistentEmail() throws ErrorDetails {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		User user = new ModelMapper().map(userDTO, User.class);
 		String timestamp = "2011-10-02 18:48:05.123";
 		user.setLastLogin(Timestamp.valueOf(timestamp));
@@ -110,7 +110,7 @@ public class UserServiceTest {
 
 	@Test
 	void testLogin_InvalidPassword() {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		User user = new ModelMapper().map(userDTO, User.class);
 		when(repository.existsByEmail(anyString())).thenReturn(true);
 		when(repository.save(any(User.class))).thenReturn(user);
