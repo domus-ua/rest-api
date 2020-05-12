@@ -6,79 +6,80 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
 
 /**
  * @author Vasco Ramos
- * @date 06/05/20
- * @time 11
+ * @date 12/mai/2020
+ * @time 21:44
  */
 
 @Entity
 @Setter
 @Getter
-public class User {
+public class House {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter(AccessLevel.NONE)
 	private long id;
 
-	@NotNull
-	private String email;
+	// TODO: check this better
+	private String street;
+
+	// TODO: check this better
+	private String city;
+
+	// TODO: check this better
+	private String postalCode;
 
 	@NotNull
-	private String firstName;
+	private int nRooms;
 
 	@NotNull
-	private String lastName;
-
-	@JsonIgnore
-	@NotNull
-	private String password;
+	private int nBathrooms;
 
 	@NotNull
-	private String phoneNumber;
+	private int nGarages;
 
 	@NotNull
-	private String sex;
+	private float habitableArea;
 
 	@NotNull
-	private String role; // locador or locatário
+	private int availability;
+
+	@NotNull
+	private float price;
+
+	@NotNull
+	private String name;
 
 	@Lob
-	private String photo;
+	@NotNull
+	private String description;
+
+	@NotNull
+	private String propertyFeatures;
 
 	@CreationTimestamp
 	@Setter(AccessLevel.NONE)
-	private Timestamp dateJoined;
+	private Timestamp publishDay;
 
-	private Timestamp lastLogin;
-
-	@ManyToMany
-	@JoinTable(name = "wishlist",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "house_id"))
+	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private List<House> wishlist;
+	private List<HousePhoto> photos;
 
-	// TODO: missing rentals and reviews attributes
+	@ManyToMany(mappedBy = "wishlist")
+	@JsonIgnore
+	private List<User> saves;
 
-	public boolean isLocador() {
-		return role.equals("locador");
-	}
-
-	public boolean isLocatario() {
-		return role.equals("locatário");
-	}
 }
-
