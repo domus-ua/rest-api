@@ -5,7 +5,7 @@ stages:
   - Test
   - Deploy
 
-.sonarqube-check:
+sonarqube-check:
   stage: Analysis
   script:
     - mvn -B -q verify sonar:sonar
