@@ -12,7 +12,6 @@ sonarqube-check:
       -Dsonar.qualitygate.wait=true
       '-Dtest=!%regex[.*UI.*]'
   only:
-    - merge_requests
     - master
 
 unit-test:
