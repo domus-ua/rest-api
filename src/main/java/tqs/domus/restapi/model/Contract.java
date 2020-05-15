@@ -32,15 +32,18 @@ public class Contract {
 
 	@OneToOne
 	@JoinColumn(name = "locatario_id")
+	@NotNull
 	private Locatario locatario;
 
 	@ManyToOne
 	@JoinColumn(name = "locador_id")
 	@JsonIgnore
+	@NotNull
 	private Locador locador;
 
 	@OneToOne
 	@JoinColumn(name = "house_id")
+	@NotNull
 	private House house;
 
 	@NotNull

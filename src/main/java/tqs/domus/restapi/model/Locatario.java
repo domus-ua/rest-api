@@ -35,6 +35,7 @@ public class Locatario {
 
 	@OneToOne
 	@JoinColumn(name = "user_id")
+	@NotNull
 	private User user;
 
 	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
