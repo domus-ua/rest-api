@@ -33,9 +33,8 @@ public class Locatario {
 	@Setter(AccessLevel.NONE)
 	private long id;
 
-	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	@NotNull
+	@OneToOne
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)

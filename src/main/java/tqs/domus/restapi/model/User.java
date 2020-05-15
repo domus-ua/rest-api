@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -60,14 +61,12 @@ public class User {
 
 	private Timestamp lastLogin;
 
-	@OneToOne
-	@JoinColumn(name = "locador_id")
+	@OneToOne(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private Locador locador;
 
-	@OneToOne
-	@JoinColumn(name = "locatario_id")
-	private Locador locatario;
-
-	// TODO: missing rentals and reviews attributes
+	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Locatario locatario;
 }
 

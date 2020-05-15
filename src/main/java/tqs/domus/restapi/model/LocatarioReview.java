@@ -1,6 +1,5 @@
 package tqs.domus.restapi.model;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
