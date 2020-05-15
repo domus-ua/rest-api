@@ -6,7 +6,7 @@ stages:
   - registry
   - deploy
 
-sonarqube-check:
+.sonarqube-check:
   stage: analysis
   script:
     - mvn -B -q verify sonar:sonar
@@ -29,7 +29,7 @@ unit-test:
     - merge_requests
     - master
 
-integration-test:
+.integration-test:
   stage: test
   script:
     - mvn -B integration-test '-Dtest=!%regex[.*UI.*]'
@@ -46,6 +46,8 @@ package:
   stage: registry
   script:
     - mvn deploy -Dmaven.test.skip=true -s ci_settings.xml
+  artifacts:
+    - target/rest-api-0.0.1-SNAPSHOT.jar
   only:
     - master
 
