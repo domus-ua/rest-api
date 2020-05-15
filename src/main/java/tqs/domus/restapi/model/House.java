@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
@@ -78,5 +79,13 @@ public class House {
 	@ManyToMany(mappedBy = "wishlist")
 	@JsonIgnore
 	private List<Locatario> saves;
+
+	@OneToMany(mappedBy = "house")
+	private List<HouseReview> reviewsReceived;
+
+	@OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	@NotNull
+	private Contract contract;
 
 }

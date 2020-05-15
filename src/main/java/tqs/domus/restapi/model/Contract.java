@@ -5,15 +5,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * @author Vasco Ramos
@@ -24,24 +24,30 @@ import java.util.List;
 @Entity
 @Setter
 @Getter
-public class Locador {
+public class Contract {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter(AccessLevel.NONE)
 	private long id;
 
+	@OneToOne
+	@JoinColumn(name = "locatario_id")
+	private Locatario locatario;
 
-	@OneToOne(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
+	@ManyToOne
+	@JoinColumn(name = "locador_id")
 	@JsonIgnore
-	private User user;
+	private Locador locador;
 
-	@OneToMany(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	private List<Contract> contracts;
+	@OneToOne
+	@JoinColumn(name = "house_id")
+	private House house;
 
 	@NotNull
-	private boolean isVerified = false;
+	private Timestamp startDate;
 
-	@OneToMany(mappedBy = "locador")
-	private List<LocatarioReview> reviews;
+	@NotNull
+	private Timestamp endDate;
+
+
 }

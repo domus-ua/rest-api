@@ -38,6 +38,11 @@ public class Locatario {
 	@NotNull
 	private User user;
 
+	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	@NotNull
+	private Contract contract;
+
 	@ManyToMany
 	@JoinTable(name = "wishlist",
 			joinColumns = @JoinColumn(name = "locatario_id"),
@@ -47,5 +52,8 @@ public class Locatario {
 
 	@OneToMany(mappedBy = "locatario")
 	private List<LocatarioReview> reviewsReceived;
+
+	@OneToMany(mappedBy = "locatario")
+	private List<HouseReview> reviews;
 
 }
