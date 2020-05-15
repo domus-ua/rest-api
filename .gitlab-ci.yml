@@ -3,7 +3,8 @@ image: maven:3.6.3-jdk-11
 stages:
   - analysis
   - test
-  - registry
+  - package
+  - docker
   - deploy
 
 .sonarqube-check:
@@ -43,7 +44,7 @@ unit-test:
     - master
 
 package:
-  stage: registry
+  stage: package
   script:
     - mvn deploy -Dmaven.test.skip=true -s ci_settings.xml
   artifacts:
@@ -53,7 +54,7 @@ package:
     - master
 
 docker:
-  stage: registry
+  stage: docker
   image: docker:stable
   only:
     - master
