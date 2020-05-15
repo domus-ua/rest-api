@@ -5,11 +5,10 @@ stages:
   - Test
   - Deploy
 
-.sonarqube-check:
+sonarqube-check:
   stage: Analysis
   script:
-    - mvn -B -q verify sonar:sonar -Dsonar.projectKey=$PROJECT_KEY -Dsonar.host.url=$SONAR_HOST_URL
-      -Dsonar.login=$SONAR_TOKEN -Dsonar.organization=$ORGANIZATION
+    - mvn -B -q verify sonar:sonar
       -Dsonar.qualitygate.wait=true
       '-Dtest=!%regex[.*UI.*]'
   only:
