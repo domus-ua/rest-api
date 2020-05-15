@@ -61,11 +61,11 @@ public class User {
 
 	private Timestamp lastLogin;
 
-	@OneToOne(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Locador locador;
 
-	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Locatario locatario;
 }

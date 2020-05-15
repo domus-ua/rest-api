@@ -33,6 +33,7 @@ public class Locador {
 
 	@OneToOne
 	@JoinColumn(name = "user_id")
+	@NotNull
 	private User user;
 
 	@OneToMany(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
