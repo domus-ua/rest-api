@@ -1,21 +1,23 @@
 image: maven:3.6.3-jdk-11
 
 stages:
-  - Analysis
-  - Test
-  - Deploy
+  - analysis
+  - test
+  - registry
+  - deploy
 
 sonarqube-check:
-  stage: Analysis
+  stage: analysis
   script:
     - mvn -B -q verify sonar:sonar
       -Dsonar.qualitygate.wait=true
       '-Dtest=!%regex[.*UI.*]'
+  allow_failure: true
   only:
     - master
 
 unit-test:
-  stage: Test
+  stage: test
   script:
     - mvn -B test
   artifacts:
@@ -28,7 +30,7 @@ unit-test:
     - master
 
 integration-test:
-  stage: Test
+  stage: test
   script:
     - mvn -B integration-test '-Dtest=!%regex[.*UI.*]'
   artifacts:
@@ -41,18 +43,33 @@ integration-test:
     - master
 
 package:
-  stage: Deploy
+  stage: registry
   script:
     - mvn deploy -Dmaven.test.skip=true -s ci_settings.xml
   only:
     - master
 
-.production:
-  stage: Deploy
+docker:
+  stage: registry
+  image: docker:stable
+  only:
+    - master
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - name: docker:dind
+      entrypoint: ["env", "-u", "DOCKER_HOST"]
+      command: ["dockerd-entrypoint.sh"]
   script:
-    - apt-get update -qy
-    - apt-get install -y ruby-dev
-    - gem install dpl
-    - dpl --provider=heroku --app=tqs-air-quality-service --api-key=$HEROKU_API_KEY
+    - echo "Building and uploading Docker image 🐳"
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH .
+    - docker push $CI_REGISTRY/$CI_PROJECT_PATH
+
+deploy:
+  stage: Deploy
+  trigger: tqs-domus/compose
   only:
     - master
