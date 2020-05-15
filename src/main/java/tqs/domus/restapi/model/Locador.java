@@ -4,72 +4,43 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
  * @author Vasco Ramos
- * @date 06/05/20
- * @time 11
+ * @date 15/mai/2020
+ * @time 11:25
  */
 
 @Entity
 @Setter
 @Getter
-public class User {
+public class Locador {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter(AccessLevel.NONE)
 	private long id;
 
-	@NotNull
-	private String email;
 
-	@NotNull
-	private String firstName;
-
-	@NotNull
-	private String lastName;
-
+	@OneToOne(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	@NotNull
-	private String password;
+	private User user;
 
 	@NotNull
-	private String phoneNumber;
+	private boolean isVerified = false;
 
-	@NotNull
-	private String sex;
-
-	@Lob
-	private String photo;
-
-	@CreationTimestamp
-	@Setter(AccessLevel.NONE)
-	private Timestamp dateJoined;
-
-	private Timestamp lastLogin;
-
-	@OneToOne
-	@JoinColumn(name = "locador_id")
-	private Locador locador;
-
-	@OneToOne
-	@JoinColumn(name = "locatario_id")
-	private Locador locatario;
-
-	// TODO: missing rentals and reviews attributes
+	@OneToMany(mappedBy = "locador")
+	private List<LocatarioReview> reviews;
 }
-

@@ -56,7 +56,6 @@ public class UserControllerTest {
 				.andExpect(jsonPath("firstName", is(user.getFirstName())))
 				.andExpect(jsonPath("lastName", is(user.getLastName())))
 				.andExpect(jsonPath("phoneNumber", is(user.getPhoneNumber())))
-				.andExpect(jsonPath("role", is(user.getRole())))
 				.andExpect(jsonPath("dateJoined", is(user.getDateJoined())))
 				.andExpect(jsonPath("lastLogin", is(user.getLastLogin())))
 				.andExpect(jsonPath("sex", is(user.getSex())))

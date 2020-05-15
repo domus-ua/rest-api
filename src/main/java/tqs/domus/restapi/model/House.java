@@ -33,13 +33,10 @@ public class House {
 	@Setter(AccessLevel.NONE)
 	private long id;
 
-	// TODO: check this better
 	private String street;
 
-	// TODO: check this better
 	private String city;
 
-	// TODO: check this better
 	private String postalCode;
 
 	@NotNull
@@ -80,6 +77,6 @@ public class House {
 
 	@ManyToMany(mappedBy = "wishlist")
 	@JsonIgnore
-	private List<User> saves;
+	private List<Locatario> saves;
 
 }
