@@ -30,7 +30,7 @@ public class UserRepositoryTest {
 
 	@Test
 	void testFindByEmail_existentEmail() {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		User user = new ModelMapper().map(userDTO, User.class);
 		manager.persistAndFlush(user);
 
@@ -46,7 +46,7 @@ public class UserRepositoryTest {
 
 	@Test
 	void testExistsByEmail_existentEmail() {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 		User user = new ModelMapper().map(userDTO, User.class);
 		manager.persistAndFlush(user);
 

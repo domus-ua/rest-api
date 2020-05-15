@@ -6,13 +6,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.sql.Timestamp;
+
 
 /**
  * @author Vasco Ramos
@@ -23,7 +26,7 @@ import java.sql.Timestamp;
 @Entity
 @Setter
 @Getter
-public class User implements Serializable {
+public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter(AccessLevel.NONE)
@@ -46,12 +49,23 @@ public class User implements Serializable {
 	private String phoneNumber;
 
 	@NotNull
-	private String role; // locador or locatário
+	private String sex;
+
+	@Lob
+	private String photo;
 
 	@CreationTimestamp
 	@Setter(AccessLevel.NONE)
 	private Timestamp dateJoined;
 
 	private Timestamp lastLogin;
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Locador locador;
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
+	private Locatario locatario;
 }
 

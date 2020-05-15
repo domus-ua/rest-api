@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = AuthenticationController.class)
 public class AuthenticationControllerTest {
 
-	private final UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador");
+	private final UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 
 	@Autowired
 	private MockMvc servlet;
@@ -54,7 +54,7 @@ public class AuthenticationControllerTest {
 
 	@Test
 	void testLogin_InvalidCredentials() throws Exception {
-		String credentials ="non_existent@email.com:pwd";
+		String credentials = "non_existent@email.com:pwd";
 		String base64Credentials = Base64.getEncoder().encodeToString(credentials.getBytes());
 
 		given(service.login(anyString(), anyString())).willThrow(new ErrorDetails("Error"));
