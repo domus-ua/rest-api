@@ -34,10 +34,13 @@ public class House {
 	@Setter(AccessLevel.NONE)
 	private long id;
 
+	@NotNull
 	private String street;
 
+	@NotNull
 	private String city;
 
+	@NotNull
 	private String postalCode;
 
 	@NotNull
