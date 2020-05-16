@@ -1,7 +1,9 @@
 package tqs.domus.restapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +30,12 @@ public class HouseController {
 	@PostMapping("")
 	public House createHouse(@Valid @RequestBody HouseDTO houseDTO) throws ErrorDetails, ResourceNotFoundException {
 		return service.registerHouse(houseDTO);
+	}
+
+	@PutMapping("/{id}")
+	public House updateHouse(@PathVariable(value = "id") long id,
+							 @Valid @RequestBody HouseDTO houseDTO) throws ResourceNotFoundException {
+		return service.updateHouse(id, houseDTO);
 	}
 
 }

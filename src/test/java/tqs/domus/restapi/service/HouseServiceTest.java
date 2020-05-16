@@ -77,7 +77,7 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testRegisterHouse_MissingLocadorParameter() {
+	void testRegisterHouse_missingLocadorParameter() {
 		List<String> photos = new ArrayList<>() {{
 			add("photo1");
 		}};
@@ -111,9 +111,7 @@ public class HouseServiceTest {
 		}};
 
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
-
 		User user = new ModelMapper().map(userDTO, User.class);
-
 		Locador locador = new Locador();
 		locador.setUser(user);
 
@@ -134,7 +132,7 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testRegisterHouse_LocadorDoesNotExist() throws ErrorDetails, ResourceNotFoundException {
+	void testRegisterHouse_locadorDoesNotExist() {
 		List<String> photos = new ArrayList<>() {{
 			add("photo1");
 		}};
@@ -148,7 +146,7 @@ public class HouseServiceTest {
 
 		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
 
-		when(locadorRepository.findById(anyLong())).thenReturn(java.util.Optional.empty());
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300,
 				true,
@@ -160,5 +158,43 @@ public class HouseServiceTest {
 		});
 	}
 
+	@Test
+	void testUpdateHouse_houseDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		HouseDTO houseDTO = new HouseDTO();
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.updateHouse(0L, houseDTO);
+		});
+	}
+
+	@Test
+	void testUpdateHouse_completeUpdate() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		HouseDTO updatedHouseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 3, 2, 2, 300,
+				true, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House updatedHouse = new ModelMapper().map(updatedHouseDTO, House.class);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(updatedHouse);
+
+		House result = service.updateHouse(1L, houseDTO);
+		assertThat(updatedHouse.toString(), hasToString(result.toString()));
+	}
 
 }
