@@ -10,23 +10,23 @@ import lombok.Getter;
 
 @Getter
 public class UserDTO {
-	private String email;
-	private String firstName;
-	private String lastName;
-	private String password;
-	private String phoneNumber;
-	private String role; // locador or locatário
-	private String sex;
+	private final String email;
+	private final String firstName;
+	private final String lastName;
+	private final String password;
+	private final String phoneNumber;
+	private final String sex;
+	private final String photo;
 
-	public UserDTO(String email, String firstName, String lastName, String password, String phoneNumber, String role,
-				   String sex) {
+	public UserDTO(String email, String firstName, String lastName, String password, String phoneNumber, String sex,
+				   String photo) {
 		this.email = email;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.password = password;
 		this.phoneNumber = phoneNumber;
-		this.role = role;
 		this.sex = sex;
+		this.photo = photo;
 	}
 }
 

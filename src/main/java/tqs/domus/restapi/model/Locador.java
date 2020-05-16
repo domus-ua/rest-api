@@ -43,6 +43,10 @@ public class Locador {
 	@NotNull
 	private boolean isVerified = false;
 
+	@NotNull
+	@Setter(AccessLevel.NONE)
+	private String role = "locador";
+
 	@OneToMany(mappedBy = "locador")
 	private List<LocatarioReview> reviews;
 }

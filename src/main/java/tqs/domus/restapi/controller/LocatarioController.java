@@ -6,27 +6,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tqs.domus.restapi.exception.ErrorDetails;
-import tqs.domus.restapi.model.User;
+import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.UserDTO;
-import tqs.domus.restapi.service.UserService;
+import tqs.domus.restapi.service.LocatarioService;
 
 import javax.validation.Valid;
 
 /**
  * @author Vasco Ramos
- * @date 06/mai/2020
- * @time 13:52
+ * @date 16/mai/2020
+ * @time 10:23
  */
 
 @RestController
-@RequestMapping("/users")
-public class UserController {
+@RequestMapping("/locatarios")
+public class LocatarioController {
 	@Autowired
-	private UserService service;
+	private LocatarioService service;
 
 	@PostMapping("")
-	public User createUser(@Valid @RequestBody UserDTO userDTO) throws ErrorDetails {
-		return service.registerUser(userDTO);
+	public Locatario createUser(@Valid @RequestBody UserDTO userDTO) throws ErrorDetails {
+		return service.registerLocatario(userDTO);
 	}
-
 }
