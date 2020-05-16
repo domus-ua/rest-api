@@ -9,11 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import tqs.domus.restapi.exception.ErrorDetails;
+import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.UserRepository;
-
-import java.sql.Timestamp;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -39,6 +40,7 @@ public class UserServiceTest {
 
 	@InjectMocks
 	private UserService service;
+
 
 	@BeforeEach
 	void setUp() {
@@ -87,17 +89,60 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void testLogin_ExistentEmail() throws ErrorDetails {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
+	void testLogin_ExistentLocadorEmail() throws ErrorDetails, ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 		User user = new ModelMapper().map(userDTO, User.class);
-		String timestamp = "2011-10-02 18:48:05.123";
-		user.setLastLogin(Timestamp.valueOf(timestamp));
-		when(repository.existsByEmail(anyString())).thenReturn(true);
-		when(repository.save(any(User.class))).thenReturn(user);
 
-		User result = service.login("v@ua.pt", "pwd");
-		assertThat(result.getLastLogin(), is(notNullValue()));
-		assertThat(result.getLastLogin().toString(), hasToString(timestamp));
+		Locador locador = new Locador();
+		locador.setUser(user);
+		user.setLocador(locador);
+
+		when(repository.findByEmail(anyString())).thenAnswer(invocation -> {
+			Object arg = invocation.getArgument(0);
+			if (user.getEmail().equals(arg)) return user;
+			else return null;
+		});
+
+		when(repository.existsByEmail(anyString())).thenReturn(true);
+
+		when(repository.save(any(User.class))).thenReturn(user);
+		System.out.println(user.getLocador());
+
+		Locador result = (Locador) service.login("v@ua.pt", "pwd");
+		assertThat(result.getUser().getLastLogin(), is(notNullValue()));
+	}
+
+	@Test
+	void testLogin_ExistentLocatarioEmail() throws ErrorDetails, ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		user.setLocatario(locatario);
+
+		when(repository.findByEmail(anyString())).thenAnswer(invocation -> {
+			Object arg = invocation.getArgument(0);
+			if (user.getEmail().equals(arg)) return user;
+			else return null;
+		});
+
+		when(repository.existsByEmail(anyString())).thenReturn(true);
+
+		Locatario result = (Locatario) service.login("v@ua.pt", "pwd");
+		assertThat(result.getUser().getLastLogin(), is(notNullValue()));
+	}
+
+	@Test
+	void testLogin_ExistentInconsistentUserEmail() throws ErrorDetails, ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+
+		when(repository.existsByEmail(anyString())).thenReturn(true);
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.login("v@ua.pt", "pwd");
+		});
 	}
 
 	@Test

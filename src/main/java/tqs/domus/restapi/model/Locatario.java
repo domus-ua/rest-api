@@ -40,7 +40,6 @@ public class Locatario {
 
 	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	@NotNull
 	private Contract contract;
 
 	@ManyToMany
@@ -55,5 +54,9 @@ public class Locatario {
 
 	@OneToMany(mappedBy = "locatario")
 	private List<HouseReview> reviews;
+
+	@NotNull
+	@Setter(AccessLevel.NONE)
+	private String role = "locatario";
 
 }
