@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.exception.ErrorDetails;
+import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -16,8 +17,10 @@ import tqs.domus.restapi.service.LocadorService;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,6 +85,45 @@ public class LocadorControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
+
+		reset(service);
+	}
+
+	@Test
+	void testGetLocadorById_inexistentId() throws Exception {
+		given(service.getLocadorById(anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/locadores/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testGetLocadorById_existentId() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		given(service.getLocadorById(anyLong())).willReturn(locador);
+
+		servlet.perform(get("/locadores/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(user.getEmail())))
+				.andExpect(jsonPath("user.firstName", is(user.getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(user.getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(user.getPhoneNumber())))
+				.andExpect(jsonPath("user.dateJoined", is(user.getDateJoined())))
+				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(user.getSex())))
+				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
+				.andExpect(jsonPath("role", is(locador.getRole())))
+				.andExpect(jsonPath("reviews", is(locador.getReviews())))
+				.andExpect(jsonPath("verified", is(locador.isVerified())));
 
 		reset(service);
 	}

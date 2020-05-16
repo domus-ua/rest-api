@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
+import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -41,5 +42,10 @@ public class LocatarioService {
 				throw new ErrorDetails("Missing Parameters");
 			}
 		}
+	}
+
+	public Locatario getLocatarioById(long id) throws ResourceNotFoundException {
+		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locatário not found for this" +
+				" " + "id: " + id));
 	}
 }

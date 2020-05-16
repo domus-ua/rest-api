@@ -4,7 +4,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
+import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.LocadorRepository;
@@ -39,5 +41,10 @@ public class LocadorService {
 				throw new ErrorDetails("Missing Parameters");
 			}
 		}
+	}
+
+	public Locador getLocadorById(long id) throws ResourceNotFoundException {
+		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not found for this" +
+				" " + "id: " + id));
 	}
 }
