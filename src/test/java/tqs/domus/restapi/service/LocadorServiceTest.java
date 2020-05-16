@@ -14,6 +14,7 @@ import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.LocadorRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -68,6 +69,23 @@ public class LocadorServiceTest {
 
 		Locador result = service.registerLocador(userDTO);
 		assertThat(locador.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testRegisterLocador_missingParameters() throws ErrorDetails {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", null, "123", "M", null);
+		when(userRepository.existsByEmail(anyString())).thenReturn(false);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		user.setLocador(locador);
+
+		when(repository.save(any(Locador.class))).thenThrow(ConstraintViolationException.class);
+
+		assertThrows(ErrorDetails.class, () -> {
+			service.registerLocador(userDTO);
+		});
 	}
 
 	@Test

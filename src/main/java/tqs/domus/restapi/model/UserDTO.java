@@ -1,5 +1,6 @@
 package tqs.domus.restapi.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Getter;
  */
 
 @Getter
+@AllArgsConstructor
 public class UserDTO {
 	private final String email;
 	private final String firstName;
@@ -17,16 +19,5 @@ public class UserDTO {
 	private final String phoneNumber;
 	private final String sex;
 	private final String photo;
-
-	public UserDTO(String email, String firstName, String lastName, String password, String phoneNumber, String sex,
-				   String photo) {
-		this.email = email;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.password = password;
-		this.phoneNumber = phoneNumber;
-		this.sex = sex;
-		this.photo = photo;
-	}
 }
 

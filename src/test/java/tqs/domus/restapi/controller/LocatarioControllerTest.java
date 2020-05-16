@@ -36,7 +36,7 @@ public class LocatarioControllerTest {
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
-	private UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+	private final UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 
 	@Autowired
 	private MockMvc servlet;
