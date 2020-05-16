@@ -135,4 +135,33 @@ public class HouseControllerTest {
 		reset(service);
 	}
 
+	@Test
+	void testUpdateHouse_completeUpdate() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.updateHouse(anyLong(), any(HouseDTO.class))).willReturn(house);
+
+		servlet.perform(put("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("street", is(house.getStreet())))
+				.andExpect(jsonPath("city", is(house.getCity())))
+				.andExpect(jsonPath("postalCode", is(house.getPostalCode())))
+				.andExpect(jsonPath("nrooms", is(house.getNRooms())))
+				.andExpect(jsonPath("nbathrooms", is(house.getNBathrooms())))
+				.andExpect(jsonPath("ngarages", is(house.getNGarages())))
+				.andExpect(jsonPath("habitableArea", is(house.getHabitableArea())))
+				.andExpect(jsonPath("price", is(house.getPrice())))
+				.andExpect(jsonPath("name", is(house.getName())))
+				.andExpect(jsonPath("description", is(house.getDescription())))
+				.andExpect(jsonPath("propertyFeatures", is(house.getPropertyFeatures())))
+				.andExpect(jsonPath("photos", is(house.getPhotos())))
+				.andExpect(jsonPath("locador", is(house.getLocador())));
+
+		reset(service);
+	}
+
 }
