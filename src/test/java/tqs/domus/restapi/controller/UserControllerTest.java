@@ -32,7 +32,7 @@ public class UserControllerTest {
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
-	private UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
+	private final UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "locador", "M");
 
 	@Autowired
 	private MockMvc servlet;

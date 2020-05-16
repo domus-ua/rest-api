@@ -8,14 +8,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
-import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
-import tqs.domus.restapi.repository.LocadorRepository;
 import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,6 +69,23 @@ public class LocatarioServiceTest {
 
 		Locatario result = service.registerLocatario(userDTO);
 		assertThat(locatario.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testRegisterLocatario_missingParameters() throws ErrorDetails {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", null, "M", null);
+		when(userRepository.existsByEmail(anyString())).thenReturn(false);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		user.setLocatario(locatario);
+
+		when(repository.save(any(Locatario.class))).thenThrow(ConstraintViolationException.class);
+
+		assertThrows(ErrorDetails.class, () -> {
+			service.registerLocatario(userDTO);
+		});
 	}
 
 	@Test

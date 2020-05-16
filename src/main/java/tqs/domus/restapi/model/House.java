@@ -7,12 +7,15 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -53,13 +56,13 @@ public class House {
 	private int nGarages;
 
 	@NotNull
-	private float habitableArea;
+	private double habitableArea;
 
 	@NotNull
-	private int availability;
+	private boolean availability;
 
 	@NotNull
-	private float price;
+	private double price;
 
 	@NotNull
 	private String name;
@@ -75,9 +78,12 @@ public class House {
 	@Setter(AccessLevel.NONE)
 	private Timestamp publishDay;
 
-	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	private List<HousePhoto> photos;
+	@ElementCollection
+	private List<String> photos;
+
+	@ManyToOne
+	@JoinColumn(name="locador_id", nullable=false)
+	private Locador locador;
 
 	@ManyToMany(mappedBy = "wishlist")
 	@JsonIgnore
@@ -88,7 +94,6 @@ public class House {
 
 	@OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	@NotNull
 	private Contract contract;
 
 }
