@@ -51,7 +51,11 @@ public class HouseController {
 	) throws ErrorDetails {
 
 		String orderAtt = "rating";
-		Boolean order = (desc != null) || desc;
+		
+		Boolean order = false;
+		if (desc != null) {
+			order = desc;
+		}
 
 		if (orderAttribute != null) {
 			if (!orderAttribute.equals("price") && !orderAttribute.equals("rating")) {
