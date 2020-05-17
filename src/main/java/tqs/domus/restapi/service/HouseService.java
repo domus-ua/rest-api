@@ -27,11 +27,11 @@ public class HouseService {
 	@Autowired
 	private LocadorRepository locadorRepository;
 
-	public House registerHouse(HouseDTO houseDTO) throws ErrorDetails,ResourceNotFoundException {
+	public House registerHouse(HouseDTO houseDTO) throws ErrorDetails, ResourceNotFoundException {
 		try {
 			long locadorId = houseDTO.getLocador().getId();
 			Locador locador = locadorRepository.findById(locadorId)
-					.orElseThrow(() -> new ResourceNotFoundException("Locador not found for this id : " + locadorId));
+					.orElseThrow(() -> new ResourceNotFoundException("Locador not found for this id: " + locadorId));
 			House house = new ModelMapper().map(houseDTO, House.class);
 			house.setLocador(locador);
 			return houseRepository.save(house);
@@ -40,4 +40,58 @@ public class HouseService {
 		}
 	}
 
+	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
+		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
+				"for this id: " + id));
+
+		if (houseDTO.getCity() != null) {
+			house.setCity(houseDTO.getCity());
+		}
+
+		if (houseDTO.getDescription() != null) {
+			house.setDescription(houseDTO.getDescription());
+		}
+
+		if (houseDTO.getHabitableArea() != 0D) {
+			house.setHabitableArea(houseDTO.getHabitableArea());
+		}
+
+		if (houseDTO.getName() != null) {
+			house.setName(houseDTO.getName());
+		}
+
+		if (houseDTO.getNoBathrooms() != 0) {
+			house.setNBathrooms(houseDTO.getNoBathrooms());
+		}
+
+		if (houseDTO.getNoGarages() != 0) {
+			house.setNGarages(houseDTO.getNoGarages());
+		}
+
+		if (houseDTO.getNoRooms() != 0) {
+			house.setNRooms(houseDTO.getNoRooms());
+		}
+
+		if (houseDTO.getPhotos() != null) {
+			house.setPhotos(houseDTO.getPhotos());
+		}
+
+		if (houseDTO.getPostalCode() != null) {
+			house.setPostalCode(houseDTO.getPostalCode());
+		}
+
+		if (houseDTO.getPrice() != 0D) {
+			house.setPrice(houseDTO.getPrice());
+		}
+
+		if (houseDTO.getPropertyFeatures() != null) {
+			house.setPropertyFeatures(houseDTO.getPropertyFeatures());
+		}
+
+		if (houseDTO.getStreet() != null) {
+			house.setStreet(houseDTO.getStreet());
+		}
+
+		return houseRepository.save(house);
+	}
 }

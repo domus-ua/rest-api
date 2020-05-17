@@ -2,6 +2,7 @@ package tqs.domus.restapi.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,20 +14,21 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class HouseDTO {
-	private final String street;
-	private final String city;
-	private final String postalCode;
-	private final int nRooms;
-	private final int nBathrooms;
-	private final int nGarages;
-	private final double habitableArea;
-	private final boolean availability;
-	private final double price;
-	private final String name;
-	private final String description;
-	private final String propertyFeatures;
-	private final List<String> photos;
-	private final LocadorDTO locador;
+	private String street;
+	private String city;
+	private String postalCode;
+	private int noRooms;
+	private int noBathrooms;
+	private int noGarages;
+	private double habitableArea;
+	private boolean available;
+	private double price;
+	private String name;
+	private String description;
+	private String propertyFeatures;
+	private List<String> photos;
+	private LocadorDTO locador;
 }
 

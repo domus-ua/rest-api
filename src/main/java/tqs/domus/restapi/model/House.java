@@ -59,7 +59,7 @@ public class House {
 	private double habitableArea;
 
 	@NotNull
-	private boolean availability;
+	private boolean available;
 
 	@NotNull
 	private double price;
@@ -82,7 +82,7 @@ public class House {
 	private List<String> photos;
 
 	@ManyToOne
-	@JoinColumn(name="locador_id", nullable=false)
+	@JoinColumn(name = "locador_id", nullable = false)
 	private Locador locador;
 
 	@ManyToMany(mappedBy = "wishlist")

@@ -22,9 +22,11 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,9 +49,7 @@ public class HouseControllerTest {
 	private final User user = new ModelMapper().map(userDTO, User.class);
 	private final LocadorDTO locador = new LocadorDTO(user.getId());
 
-	private final HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300,
-			true,
-			230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locador);
+	private final HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locador);
 
 	@Autowired
 	private MockMvc servlet;
@@ -59,9 +59,7 @@ public class HouseControllerTest {
 
 	@Test
 	void testCreateHouse_correctParameters() throws Exception {
-
 		House house = new ModelMapper().map(houseDTO, House.class);
-
 		String houseJsonString = mapper.writeValueAsString(house);
 
 		given(service.registerHouse(any(HouseDTO.class))).willReturn(house);
@@ -91,7 +89,6 @@ public class HouseControllerTest {
 	@Test
 	void testCreateHouse_incorrectParameters() throws Exception {
 		House house = new ModelMapper().map(houseDTO, House.class);
-
 		String houseJsonString = mapper.writeValueAsString(house);
 
 		given(service.registerHouse(any(HouseDTO.class))).willThrow(new ErrorDetails("Error"));
@@ -107,9 +104,8 @@ public class HouseControllerTest {
 
 
 	@Test
-	void testCreateHouse_LocadorDoesNotExist() throws Exception {
+	void testCreateHouse_locadorDoesNotExist() throws Exception {
 		House house = new ModelMapper().map(houseDTO, House.class);
-
 		String houseJsonString = mapper.writeValueAsString(house);
 
 		given(service.registerHouse(any(HouseDTO.class))).willThrow(new ResourceNotFoundException("Error"));
@@ -123,5 +119,49 @@ public class HouseControllerTest {
 		reset(service);
 	}
 
+	@Test
+	void testUpdateHouse_houseDoesNotExist() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.updateHouse(anyLong(), any(HouseDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(put("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testUpdateHouse_completeUpdate() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.updateHouse(anyLong(), any(HouseDTO.class))).willReturn(house);
+
+		servlet.perform(put("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("street", is(house.getStreet())))
+				.andExpect(jsonPath("city", is(house.getCity())))
+				.andExpect(jsonPath("postalCode", is(house.getPostalCode())))
+				.andExpect(jsonPath("nrooms", is(house.getNRooms())))
+				.andExpect(jsonPath("nbathrooms", is(house.getNBathrooms())))
+				.andExpect(jsonPath("ngarages", is(house.getNGarages())))
+				.andExpect(jsonPath("habitableArea", is(house.getHabitableArea())))
+				.andExpect(jsonPath("price", is(house.getPrice())))
+				.andExpect(jsonPath("name", is(house.getName())))
+				.andExpect(jsonPath("description", is(house.getDescription())))
+				.andExpect(jsonPath("propertyFeatures", is(house.getPropertyFeatures())))
+				.andExpect(jsonPath("photos", is(house.getPhotos())))
+				.andExpect(jsonPath("locador", is(house.getLocador())));
+
+		reset(service);
+	}
 
 }
