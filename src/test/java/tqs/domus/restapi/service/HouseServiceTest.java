@@ -25,11 +25,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasToString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -201,7 +197,7 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testSearchHouse() {
+	void testSearchHouse_priceAsc() {
 		List<House> houses = new ArrayList<>();
 
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
@@ -220,10 +216,48 @@ public class HouseServiceTest {
 				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house = new ModelMapper().map(houseDTO, House.class);
 		houses.add(house);
+		HouseDTO houseDTO2 = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 330, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house2 = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house2);
 
 		when(repository.save(any(House.class))).thenReturn(house);
-		when(repository.findByAttributesAscPrice(anyString(), anyInt(), anyDouble(), anyDouble())).thenReturn(houses);
-		assertThat(house.toString(), hasToString(houses.get(0).toString()));
+		when(repository.findByAttributesDescPrice(anyString(), anyInt(), anyDouble(), anyDouble())).thenReturn(houses);
+		List<House> result = service.searchHouse("Aveiro", 5, 100.0, 500.0, "price", true);
+		assertThat(houses.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testSearchHouse_ratingDesc() {
+		List<House> houses = new ArrayList<>();
+
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+		house.setAverageRating(5.0);
+		houses.add(house);
+		HouseDTO houseDTO2 = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 330, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house2 = new ModelMapper().map(houseDTO, House.class);
+		house2.setAverageRating(3.5);
+		houses.add(house2);
+
+		when(repository.save(any(House.class))).thenReturn(house);
+		when(repository.findByAttributesAscRating(anyString(), anyInt(), anyDouble(), anyDouble())).thenReturn(houses);
+		List<House> result = service.searchHouse("Aveiro", 5, 100.0, 500.0, "rating", false);
+		assertThat(houses.toString(), hasToString(result.toString()));
 	}
 
 }

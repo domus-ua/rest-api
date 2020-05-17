@@ -32,8 +32,7 @@ import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author João Vasconcelos
@@ -172,11 +171,15 @@ public class HouseControllerTest {
 	@Test
 	void testSearchHouse_incorrectParameters() throws Exception {
 		List<House> houses = new ArrayList<>();
-		houses.add(new ModelMapper().map(houseDTO, House.class));
-
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
 		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
-
-		servlet.perform(get("/houses?orderAttribute=bad"))
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "wrong")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest());
 
 		reset(service);
@@ -186,11 +189,51 @@ public class HouseControllerTest {
 	@Test
 	void testSearchHouse_Ok() throws Exception {
 		List<House> houses = new ArrayList<>();
-		houses.add(new ModelMapper().map(houseDTO, House.class));
-
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
 		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 
-		servlet.perform(get("/houses"))
+		reset(service);
+
+	}
+
+	@Test
+	void testSearchHouse_PriceOrder() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "price")
+				.param("desc", "true")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+
+	}
+
+	@Test
+	void testSearchHouse_RatingOrder() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "rating")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 
 		reset(service);
