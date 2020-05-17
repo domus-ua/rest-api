@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -162,6 +162,34 @@ public class HouseControllerTest {
 				.andExpect(jsonPath("locador", is(house.getLocador())));
 
 		reset(service);
+	}
+
+	@Test
+	void testSearchHouse_incorrectParameters() throws Exception {
+		List<House> houses = new ArrayList<>();
+		houses.add(new ModelMapper().map(houseDTO, House.class));
+
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+
+		servlet.perform(get("/houses?orderAttribute=bad"))
+				.andExpect(status().isBadRequest());
+
+		reset(service);
+
+	}
+
+	@Test
+	void testSearchHouse_Ok() throws Exception {
+		List<House> houses = new ArrayList<>();
+		houses.add(new ModelMapper().map(houseDTO, House.class));
+
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+
+		servlet.perform(get("/houses"))
+				.andExpect(status().isOk());
+
+		reset(service);
+
 	}
 
 }
