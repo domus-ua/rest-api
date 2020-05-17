@@ -18,8 +18,6 @@ import tqs.domus.restapi.service.HouseService;
 import javax.validation.Valid;
 import java.util.List;
 
-;
-
 /**
  * @author João Vasconcelos
  * @date 16/mai/2020
@@ -53,7 +51,7 @@ public class HouseController {
 	) throws ErrorDetails {
 
 		String orderAtt = "rating";
-		Boolean order = (desc == null) ? false : desc;
+		Boolean order = (desc != null) || desc;
 
 		if (orderAttribute != null) {
 			if (!orderAttribute.equals("price") && !orderAttribute.equals("rating")) {
