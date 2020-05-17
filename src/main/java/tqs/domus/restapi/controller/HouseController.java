@@ -1,13 +1,9 @@
 package tqs.domus.restapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;;
 import tqs.domus.restapi.exception.ErrorDetails;
+import org.springframework.web.bind.annotation.RequestParam;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.HouseDTO;
@@ -33,13 +29,19 @@ public class HouseController {
 		return service.registerHouse(houseDTO);
 	}
 
+	@PutMapping("/{id}")
+	public House updateHouse(@PathVariable(value = "id") long id,
+							 @Valid @RequestBody HouseDTO houseDTO) throws ResourceNotFoundException {
+		return service.updateHouse(id, houseDTO);
+	}
+
 	@GetMapping("")
 	public List<House> searchHouse(@RequestParam(required = false) String city,
-							 @RequestParam(required = false) Integer nRooms,
-							 @RequestParam(required = false) Double minPrice,
-							 @RequestParam(required = false) Double maxPrice,
-							 @RequestParam(required = false) String orderAttribute,
-							 @RequestParam(required = false) Boolean desc
+                                   @RequestParam(required = false) Integer nRooms,
+                                   @RequestParam(required = false) Double minPrice,
+                                   @RequestParam(required = false) Double maxPrice,
+                                   @RequestParam(required = false) String orderAttribute,
+                                   @RequestParam(required = false) Boolean desc
 							 ) throws ErrorDetails {
 
 		String orderAtt = "rating";

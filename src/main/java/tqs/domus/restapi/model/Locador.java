@@ -36,7 +36,7 @@ public class Locador {
 	@NotNull
 	private User user;
 
-	@OneToMany(mappedBy="locador", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<House> houses;
 
