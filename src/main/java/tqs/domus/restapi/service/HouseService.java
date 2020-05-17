@@ -12,7 +12,7 @@ import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocadorRepository;
 
 import javax.validation.ConstraintViolationException;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author João Vasconcelos
@@ -44,14 +44,16 @@ public class HouseService {
 
 	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice, String orderAttribute, Boolean desc) {
 		if(orderAttribute.equals("price") && desc){
-			return houseRepository.findByAttributesDesc(city, nRooms, minPrice, maxPrice);
+			return houseRepository.findByAttributesDescPrice(city, nRooms, minPrice, maxPrice);
 		}
 		else if(orderAttribute.equals("price")){
-			return houseRepository.findByAttributesAsc(city, nRooms, minPrice, maxPrice);
+			return houseRepository.findByAttributesAscPrice(city, nRooms, minPrice, maxPrice);
 		}
-		// TODO: sort by ratings
+		else if(orderAttribute.equals("rating") && !desc){
+			return houseRepository.findByAttributesAscRating(city, nRooms, minPrice, maxPrice);
+		}
 		else{
-			return null;
+			return houseRepository.findByAttributesDescRating(city, nRooms, minPrice, maxPrice);
 		}
 	}
 

@@ -39,10 +39,14 @@ public class HouseController {
 							 @RequestParam(required = false) Double minPrice,
 							 @RequestParam(required = false) Double maxPrice,
 							 @RequestParam(required = false) String orderAttribute,
-							 @RequestParam Boolean desc
-							 ) throws ErrorDetails, ResourceNotFoundException {
+							 @RequestParam(required = false) Boolean desc
+							 ) throws ErrorDetails {
 
 		String orderAtt = "rating";
+		Boolean order = false;
+		if(desc != null){
+			order = desc;
+		}
 		if(orderAttribute != null){
 			if(!orderAttribute.equals("price") && !orderAttribute.equals("rating")){
 				throw new ErrorDetails("Order attribute not supported");
@@ -52,7 +56,7 @@ public class HouseController {
 			}
 		}
 
-		return service.searchHouse(city, nRooms, minPrice, maxPrice, orderAtt, desc);
+		return service.searchHouse(city, nRooms, minPrice, maxPrice, orderAtt, order);
 	}
 
 
