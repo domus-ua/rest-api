@@ -2,7 +2,6 @@ package tqs.domus.restapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import tqs.domus.restapi.model.HouseDTO;
 import tqs.domus.restapi.service.HouseService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author João Vasconcelos
@@ -33,15 +33,26 @@ public class HouseController {
 		return service.registerHouse(houseDTO);
 	}
 
-	@GetMapping("/{id}")
-	public House searchHouse(@PathVariable(value = "id") Long houseId, @RequestParam(required = false) String city,
+	@GetMapping("")
+	public List<House> searchHouse(@RequestParam(required = false) String city,
 							 @RequestParam(required = false) Integer nRooms,
 							 @RequestParam(required = false) Double minPrice,
 							 @RequestParam(required = false) Double maxPrice,
 							 @RequestParam(required = false) String orderAttribute,
-							 @RequestParam(required = false) Boolean desc
+							 @RequestParam Boolean desc
 							 ) throws ErrorDetails, ResourceNotFoundException {
-		return null; // TODO: implement this
+
+		String orderAtt = "rating";
+		if(orderAttribute != null){
+			if(!orderAttribute.equals("price") && !orderAttribute.equals("rating")){
+				throw new ErrorDetails("Order attribute not supported");
+			}
+			else{
+				orderAtt = orderAttribute;
+			}
+		}
+
+		return service.searchHouse(city, nRooms, minPrice, maxPrice, orderAtt, desc);
 	}
 
 
