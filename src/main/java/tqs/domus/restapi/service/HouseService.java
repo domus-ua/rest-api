@@ -2,6 +2,7 @@ package tqs.domus.restapi.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
@@ -27,7 +28,7 @@ public class HouseService {
 	@Autowired
 	private LocadorRepository locadorRepository;
 
-	public House registerHouse(HouseDTO houseDTO) throws ErrorDetails,ResourceNotFoundException {
+	public House registerHouse(HouseDTO houseDTO) throws ErrorDetails, ResourceNotFoundException {
 		try {
 			long locadorId = houseDTO.getLocador().getId();
 			Locador locador = locadorRepository.findById(locadorId)
@@ -40,4 +41,13 @@ public class HouseService {
 		}
 	}
 
+	public ResponseEntity<?> deleteHouse(long id) throws ResourceNotFoundException {
+		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
+				"for this id: " + id));
+
+		houseRepository.delete(house);
+
+		return ResponseEntity.noContent().build();
+
+	}
 }

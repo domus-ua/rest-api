@@ -1,6 +1,9 @@
 package tqs.domus.restapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +32,11 @@ public class HouseController {
 	public House createHouse(@Valid @RequestBody HouseDTO houseDTO) throws ErrorDetails, ResourceNotFoundException {
 		return service.registerHouse(houseDTO);
 	}
+
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> updateHouse(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+		return service.deleteHouse(id);
+	}
+
 
 }
