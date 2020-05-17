@@ -43,16 +43,13 @@ public class HouseService {
 
 
 	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice, String orderAttribute, Boolean desc) {
-		if(orderAttribute.equals("price") && desc){
+		if (orderAttribute.equals("price") && desc) {
 			return houseRepository.findByAttributesDescPrice(city, nRooms, minPrice, maxPrice);
-		}
-		else if(orderAttribute.equals("price")){
+		} else if (orderAttribute.equals("price")) {
 			return houseRepository.findByAttributesAscPrice(city, nRooms, minPrice, maxPrice);
-		}
-		else if(orderAttribute.equals("rating") && !desc){
+		} else if (orderAttribute.equals("rating") && !desc) {
 			return houseRepository.findByAttributesAscRating(city, nRooms, minPrice, maxPrice);
-		}
-		else{
+		} else {
 			return houseRepository.findByAttributesDescRating(city, nRooms, minPrice, maxPrice);
 		}
 	}
