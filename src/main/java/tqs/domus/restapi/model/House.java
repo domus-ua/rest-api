@@ -79,6 +79,7 @@ public class House {
 	private Timestamp publishDay;
 
 	@ElementCollection
+	@Lob
 	private List<String> photos;
 
 	@ManyToOne
