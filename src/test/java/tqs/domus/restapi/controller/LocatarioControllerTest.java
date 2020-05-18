@@ -22,6 +22,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -127,4 +128,53 @@ public class LocatarioControllerTest {
 
 		reset(service);
 	}
+
+	@Test
+	void testUpdateLocatario_LocatarioDoesNotExist() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.updateLocatarioById(anyLong(), any(UserDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(put("/locatarios/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testUpdateLocatario_completeUpdate() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.updateLocatarioById(anyLong(), any(UserDTO.class))).willReturn(locatario);
+
+		servlet.perform(put("/locatarios/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(user.getEmail())))
+				.andExpect(jsonPath("user.firstName", is(user.getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(user.getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(user.getPhoneNumber())))
+				.andExpect(jsonPath("user.dateJoined", is(user.getDateJoined())))
+				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(user.getSex())))
+				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
+				.andExpect(jsonPath("role", is(locatario.getRole())))
+				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
+				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+
+		reset(service);
+	}
+
 }

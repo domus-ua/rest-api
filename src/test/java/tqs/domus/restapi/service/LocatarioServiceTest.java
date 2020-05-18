@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -112,4 +113,36 @@ public class LocatarioServiceTest {
 		assertThat(locatario.toString(), hasToString(result.toString()));
 	}
 
+	@Test
+	void testUpdateLocatarioById_inexistentId() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.updateLocatarioById(0L,userDTO);
+		});
+	}
+
+	@Test
+	void testUpdateLocatario_completeUpdate() throws ErrorDetails, ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		UserDTO updatedUserDTO = new UserDTO("v@ua.pt", "João", "Vasconcelos", "pwd", "123", "M", null);
+
+		User updatedUser = new ModelMapper().map(updatedUserDTO, User.class);
+		Locatario updatedLocatario = new Locatario();
+		locatario.setUser(updatedUser);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
+		when(repository.save(any(Locatario.class))).thenReturn(updatedLocatario);
+
+		Locatario result = service.updateLocatarioById(1L, userDTO);
+		assertThat(updatedLocatario.toString(), hasToString(result.toString()));
+
+	}
 }

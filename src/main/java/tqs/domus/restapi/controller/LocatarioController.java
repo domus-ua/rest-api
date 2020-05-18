@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,12 @@ public class LocatarioController {
 	@GetMapping("/{id}")
 	public Locatario getUserById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
 		return service.getLocatarioById(id);
+	}
+
+	@PutMapping("/{id}")
+	public Locatario updateLocatarioById(@PathVariable(value = "id") long id,
+										 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
+		return service.updateLocatarioById(id, userDTO);
 	}
 
 }

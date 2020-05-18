@@ -19,6 +19,7 @@ import tqs.domus.restapi.service.LocatarioService;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -110,5 +111,37 @@ public class LocatarioControllerIT {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testUpdateLocatario_locatarioDoesNotExist() throws Exception {
+		String userJsonString = mapper.writeValueAsString(userDTO);
+
+		servlet.perform(put("/locatarios/0")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testUpdateLocatario_completeUpdate() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+
+		String userJsonString = mapper.writeValueAsString(userDTO);
+
+		servlet.perform(put("/locatarios/" + locatario.getId())
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(locatario.getUser().getEmail())))
+				.andExpect(jsonPath("user.firstName", is(locatario.getUser().getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(locatario.getUser().getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(locatario.getUser().getPhoneNumber())))
+				.andExpect(jsonPath("user.lastLogin", is(locatario.getUser().getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(locatario.getUser().getSex())))
+				.andExpect(jsonPath("user.photo", is(locatario.getUser().getPhoto())))
+				.andExpect(jsonPath("role", is(locatario.getRole())));
 	}
 }
