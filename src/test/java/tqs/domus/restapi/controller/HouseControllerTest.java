@@ -240,6 +240,38 @@ public class HouseControllerTest {
 	}
 
 	@Test
+	void testGetHouse_houseDoesNotExist() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.getHouse(anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testGetHouse_houseExists() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.getHouse(anyLong())).willReturn(house);
+
+		servlet.perform(get("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+	}
+
+	@Test
 	void testDeleteHouse_houseDoesNotExist() throws Exception {
 		House house = new ModelMapper().map(houseDTO, House.class);
 		String houseJsonString = mapper.writeValueAsString(house);
@@ -251,8 +283,6 @@ public class HouseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
-
-		reset(service);
 	}
 
 	@Test
@@ -267,8 +297,6 @@ public class HouseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());
-
-		reset(service);
 	}
 
 }

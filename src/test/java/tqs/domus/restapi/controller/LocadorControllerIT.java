@@ -17,6 +17,7 @@ import tqs.domus.restapi.repository.UserRepository;
 import tqs.domus.restapi.service.LocadorService;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -112,4 +113,24 @@ public class LocadorControllerIT {
 				.andExpect(jsonPath("role", is(locador.getRole())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 	}
+
+	@Test
+	void testDeleteLocadorById_existentId() throws Exception {
+
+		Locador locador = service.registerLocador(userDTO);
+
+		servlet.perform(delete("/locadores/" + locador.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void testDeleteLocadorById_inexistentId() throws Exception {
+		servlet.perform(delete("/locadores/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
 }

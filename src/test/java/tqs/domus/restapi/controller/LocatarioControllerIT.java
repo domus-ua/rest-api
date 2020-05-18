@@ -17,6 +17,7 @@ import tqs.domus.restapi.repository.UserRepository;
 import tqs.domus.restapi.service.LocatarioService;
 
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -111,4 +112,22 @@ public class LocatarioControllerIT {
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
+
+	@Test
+	void testDeleteLocatarioById_existentId() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+
+		servlet.perform(delete("/locatarios/" + locatario.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+	}
+	@Test
+	void testDeleteLocatarioById_inexistentId() throws Exception {
+		servlet.perform(delete("/locatarios/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
 }

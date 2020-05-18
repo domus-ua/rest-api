@@ -353,36 +353,73 @@ public class HouseServiceTest {
 		assertThat(cities, is(equalTo(result)));
 	}
 
-    @Test
-    void testDeleteHouse_houseDoesNotExists(){
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> {
-            service.deleteHouse(anyLong());
-        });
+	@Test
+	void testGetHouse_houseDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
-    }
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.getHouse(0L);
+		});
+	}
 
-    @Test
-    void testDeleteHouse_completeDelete() throws ResourceNotFoundException {
+	@Test
+	void testGetHouse_houseExists() throws ResourceNotFoundException {
+
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 		User user = new ModelMapper().map(userDTO, User.class);
 		Locador locador = new Locador();
 		locador.setUser(user);
 		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
 		List<String> photos = new ArrayList<>() {{
 			add("photo1");
 		}};
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
 		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
 				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house = new ModelMapper().map(houseDTO, House.class);
 
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(house);
+
+		House result = service.getHouse(1L);
+		assertThat(house.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testDeleteHouse_houseDoesNotExists(){
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.deleteHouse(anyLong());
+		});
+
+	}
+
+	@Test
+	void testDeleteHouse_completeDelete() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
 
 		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
 		when(repository.save(any(House.class))).thenReturn(house);
 		ResponseEntity<Void> result = service.deleteHouse(house.getId());
 		assertThat(ResponseEntity.noContent().build().toString(), hasToString(result.toString()));
 
-
-    }
+	}
 
 }

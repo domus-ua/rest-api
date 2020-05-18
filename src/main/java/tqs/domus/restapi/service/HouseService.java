@@ -116,6 +116,11 @@ public class HouseService {
 		return houseRepository.findAllCities();
 	}
 
+	public House getHouse(long id) throws ResourceNotFoundException {
+		return houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
+				"for this id: " + id));
+	}
+
 	public ResponseEntity<Void> deleteHouse(long id) throws ResourceNotFoundException {
 		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
 				"for this id: " + id));
@@ -125,4 +130,6 @@ public class HouseService {
 		return ResponseEntity.noContent().build();
 
 	}
+
+
 }

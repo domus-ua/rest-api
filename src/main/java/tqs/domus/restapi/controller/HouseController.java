@@ -76,5 +76,10 @@ public class HouseController {
 		return service.searchHouse(city, nRooms, minPrice, maxPrice, orderAtt, order);
 	}
 
+	@GetMapping("/{id}")
+	public House getHouse(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+		return service.getHouse(id);
+	}
+
 
 }

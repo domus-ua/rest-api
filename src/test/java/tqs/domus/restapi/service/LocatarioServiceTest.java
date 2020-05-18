@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Locatario;
@@ -111,5 +112,30 @@ public class LocatarioServiceTest {
 
 		assertThat(locatario.toString(), hasToString(result.toString()));
 	}
+
+	@Test
+	void testDeleteLocatarioById_existentId() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
+
+		ResponseEntity<?> result = service.deleteLocatarioById(0L);
+
+		assertThat(ResponseEntity.noContent().build(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testDeleteLocatarioById_inexistentId() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.deleteLocatarioById(0L);
+		});
+	}
+
 
 }
