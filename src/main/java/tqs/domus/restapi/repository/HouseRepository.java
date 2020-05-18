@@ -18,7 +18,8 @@ import java.util.List;
 @Repository
 public interface HouseRepository extends JpaRepository<House, Long> {
 
-	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or h.nRooms = :nRooms)" +
+	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or h.noRooms = " +
+			":nRooms)" +
 			" and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or h.price <= :maxPrice)" +
 			" ORDER BY h.price ASC")
 	List<House> findByAttributesAscPrice(@Param("city") String city,
@@ -26,7 +27,8 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 										 @Param("minPrice") Double minPrice,
 										 @Param("maxPrice") Double maxPrice);
 
-	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or h.nRooms = :nRooms)" +
+	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or h.noRooms = " +
+			":nRooms)" +
 			" and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or h.price <= :maxPrice)" +
 			" ORDER BY h.price DESC")
 	List<House> findByAttributesDescPrice(@Param("city") String city,
@@ -35,7 +37,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 										  @Param("maxPrice") Double maxPrice);
 
 	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or " +
-			"h.nRooms = :nRooms) and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or " +
+			"h.noRooms = :nRooms) and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or " +
 			"h.price <= :maxPrice) ORDER BY h.averageRating ASC")
 	List<House> findByAttributesAscRating(@Param("city") String city,
 										  @Param("nRooms") Integer nRooms,
@@ -43,7 +45,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 										  @Param("maxPrice") Double maxPrice);
 
 	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or " +
-			"h.nRooms = :nRooms) and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or " +
+			"h.noRooms = :nRooms) and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or " +
 			"h.price <= :maxPrice) ORDER BY h.averageRating DESC")
 	List<House> findByAttributesDescRating(@Param("city") String city,
 										   @Param("nRooms") Integer nRooms,
