@@ -2,6 +2,7 @@ package tqs.domus.restapi.service;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
@@ -45,5 +46,16 @@ public class LocadorService {
 	public Locador getLocadorById(long id) throws ResourceNotFoundException {
 		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not found for this" +
 				" " + "id: " + id));
+	}
+
+	public ResponseEntity<Void> deleteLocadorById(long id) throws ResourceNotFoundException {
+		Locador locador = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not " +
+				"found for this" +
+				" " + "id: " + id));
+
+		userRepository.delete(locador.getUser());
+
+		return ResponseEntity.noContent().build();
+
 	}
 }
