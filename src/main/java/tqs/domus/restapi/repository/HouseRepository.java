@@ -50,5 +50,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 										   @Param("minPrice") Double minPrice,
 										   @Param("maxPrice") Double maxPrice);
 
+	@Query("SELECT DISTINCT h.city FROM House h")
+	List<String> findAllCities();
 }
 
