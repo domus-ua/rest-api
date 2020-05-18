@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.RestApiApplication;
+import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -144,4 +145,30 @@ public class LocatarioControllerIT {
 				.andExpect(jsonPath("user.photo", is(locatario.getUser().getPhoto())))
 				.andExpect(jsonPath("role", is(locatario.getRole())));
 	}
+
+	@Test
+	void testUpdateLocatario_partialUpdate() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+		UserDTO updatedUserDTO = new UserDTO(null, null, null, null, null, null, "photo1");
+
+
+		String userJsonString = mapper.writeValueAsString(updatedUserDTO);
+
+		servlet.perform(put("/locatarios/" + locatario.getId())
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(locatario.getUser().getEmail())))
+				.andExpect(jsonPath("user.firstName", is(locatario.getUser().getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(locatario.getUser().getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(locatario.getUser().getPhoneNumber())))
+				.andExpect(jsonPath("user.lastLogin", is(locatario.getUser().getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(locatario.getUser().getSex())))
+				.andExpect(jsonPath("user.photo", is(updatedUserDTO.getPhoto())))
+				.andExpect(jsonPath("role", is(locatario.getRole())));
+
+
+	}
+
 }
