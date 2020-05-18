@@ -114,4 +114,10 @@ public class HouseService {
 	public List<String> getAllCities() {
 		return houseRepository.findAllCities();
 	}
+
+	public House getHouse(long id) throws ResourceNotFoundException {
+		return houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
+				"for this id: " + id));
+	}
+
 }

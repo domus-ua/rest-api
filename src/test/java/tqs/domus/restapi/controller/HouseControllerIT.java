@@ -224,4 +224,29 @@ public class HouseControllerIT {
 
 	}
 
+	@Test
+	void testGetHouse_houseDoesNotExist() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		servlet.perform(get("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouse_houseExists() throws Exception {
+		House house = houseService.registerHouse(houseDTO);
+		House houseMapper = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(houseMapper);
+
+		servlet.perform(get("/houses/" + house.getId())
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
 }
