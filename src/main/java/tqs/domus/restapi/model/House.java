@@ -47,13 +47,13 @@ public class House {
 	private String postalCode;
 
 	@NotNull
-	private int nRooms;
+	private int noRooms;
 
 	@NotNull
-	private int nBathrooms;
+	private int noBathrooms;
 
 	@NotNull
-	private int nGarages;
+	private int noGarages;
 
 	@NotNull
 	private double habitableArea;
@@ -79,6 +79,7 @@ public class House {
 	private Timestamp publishDay;
 
 	@ElementCollection
+	@Lob
 	private List<String> photos;
 
 	@ManyToOne
@@ -95,5 +96,8 @@ public class House {
 	@OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private Contract contract;
+
+	@NotNull
+	private double averageRating = 0.0;
 
 }

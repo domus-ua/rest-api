@@ -13,6 +13,7 @@ import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocadorRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 /**
  * @author João Vasconcelos
@@ -41,6 +42,21 @@ public class HouseService {
 		}
 	}
 
+
+	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice,
+								   String orderAttribute, boolean desc) {
+		if (orderAttribute.equals("price") && desc) {
+			return houseRepository.findByAttributesDescPrice(city, nRooms, minPrice, maxPrice);
+		} else if (orderAttribute.equals("price")) {
+			return houseRepository.findByAttributesAscPrice(city, nRooms, minPrice, maxPrice);
+		} else if (orderAttribute.equals("rating") && !desc) {
+			return houseRepository.findByAttributesAscRating(city, nRooms, minPrice, maxPrice);
+		} else {
+			return houseRepository.findByAttributesDescRating(city, nRooms, minPrice, maxPrice);
+		}
+	}
+
+
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
 		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
 				"for this id: " + id));
@@ -62,15 +78,15 @@ public class HouseService {
 		}
 
 		if (houseDTO.getNoBathrooms() != 0) {
-			house.setNBathrooms(houseDTO.getNoBathrooms());
+			house.setNoBathrooms(houseDTO.getNoBathrooms());
 		}
 
 		if (houseDTO.getNoGarages() != 0) {
-			house.setNGarages(houseDTO.getNoGarages());
+			house.setNoGarages(houseDTO.getNoGarages());
 		}
 
 		if (houseDTO.getNoRooms() != 0) {
-			house.setNRooms(houseDTO.getNoRooms());
+			house.setNoRooms(houseDTO.getNoRooms());
 		}
 
 		if (houseDTO.getPhotos() != null) {

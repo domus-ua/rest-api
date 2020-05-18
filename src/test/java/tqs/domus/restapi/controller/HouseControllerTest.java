@@ -22,9 +22,14 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.reset;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -72,9 +77,9 @@ public class HouseControllerTest {
 				.andExpect(jsonPath("street", is(house.getStreet())))
 				.andExpect(jsonPath("city", is(house.getCity())))
 				.andExpect(jsonPath("postalCode", is(house.getPostalCode())))
-				.andExpect(jsonPath("nrooms", is(house.getNRooms())))
-				.andExpect(jsonPath("nbathrooms", is(house.getNBathrooms())))
-				.andExpect(jsonPath("ngarages", is(house.getNGarages())))
+				.andExpect(jsonPath("noRooms", is(house.getNoRooms())))
+				.andExpect(jsonPath("noBathrooms", is(house.getNoBathrooms())))
+				.andExpect(jsonPath("noGarages", is(house.getNoGarages())))
 				.andExpect(jsonPath("habitableArea", is(house.getHabitableArea())))
 				.andExpect(jsonPath("price", is(house.getPrice())))
 				.andExpect(jsonPath("name", is(house.getName())))
@@ -150,9 +155,9 @@ public class HouseControllerTest {
 				.andExpect(jsonPath("street", is(house.getStreet())))
 				.andExpect(jsonPath("city", is(house.getCity())))
 				.andExpect(jsonPath("postalCode", is(house.getPostalCode())))
-				.andExpect(jsonPath("nrooms", is(house.getNRooms())))
-				.andExpect(jsonPath("nbathrooms", is(house.getNBathrooms())))
-				.andExpect(jsonPath("ngarages", is(house.getNGarages())))
+				.andExpect(jsonPath("noRooms", is(house.getNoRooms())))
+				.andExpect(jsonPath("noBathrooms", is(house.getNoBathrooms())))
+				.andExpect(jsonPath("noGarages", is(house.getNoGarages())))
 				.andExpect(jsonPath("habitableArea", is(house.getHabitableArea())))
 				.andExpect(jsonPath("price", is(house.getPrice())))
 				.andExpect(jsonPath("name", is(house.getName())))
@@ -160,6 +165,74 @@ public class HouseControllerTest {
 				.andExpect(jsonPath("propertyFeatures", is(house.getPropertyFeatures())))
 				.andExpect(jsonPath("photos", is(house.getPhotos())))
 				.andExpect(jsonPath("locador", is(house.getLocador())));
+
+		reset(service);
+	}
+
+	@Test
+	void testSearchHouse_incorrectParameters() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "wrong")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+
+		reset(service);
+	}
+
+	@Test
+	void testSearchHouse_Ok() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+	}
+
+	@Test
+	void testSearchHouse_PriceOrder() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "price")
+				.param("desc", "true")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+	}
+
+	@Test
+	void testSearchHouse_RatingOrder() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(house);
+		given(service.searchHouse(anyString(), anyInt(), anyDouble(), anyDouble(), anyString(), anyBoolean())).willReturn(houses);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "rating")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 
 		reset(service);
 	}
