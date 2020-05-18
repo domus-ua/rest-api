@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,5 +44,12 @@ public class LocadorController {
 	public ResponseEntity<Void> deleteLocadorById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
 		return service.deleteLocadorById(id);
 	}
+
+	@PutMapping("/{id}")
+	public Locador updateLocadorById(@PathVariable(value = "id") long id,
+										 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
+		return service.updateLocadorById(id, userDTO);
+	}
+
 
 }

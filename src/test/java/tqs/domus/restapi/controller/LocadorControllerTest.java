@@ -24,6 +24,7 @@ import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -154,6 +155,86 @@ public class LocadorControllerTest {
 				.andExpect(status().isNotFound());
 
 		reset(service);
+	}
+
+	@Test
+	void testUpdateLocador_locadorDoesNotExist() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.updateLocadorById(anyLong(), any(UserDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(put("/locadores/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testUpdateLocador_completeUpdate() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.updateLocadorById(anyLong(), any(UserDTO.class))).willReturn(locador);
+
+		servlet.perform(put("/locadores/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(user.getEmail())))
+				.andExpect(jsonPath("user.firstName", is(user.getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(user.getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(user.getPhoneNumber())))
+				.andExpect(jsonPath("user.dateJoined", is(user.getDateJoined())))
+				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(user.getSex())))
+				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
+				.andExpect(jsonPath("role", is(locador.getRole())))
+				.andExpect(jsonPath("reviews", is(locador.getReviews())))
+				.andExpect(jsonPath("verified", is(locador.isVerified())));
+
+		reset(service);
+
+	}
+
+	@Test
+	void testUpdateLocador_partialUpdate() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		UserDTO updatedUserDTO = new UserDTO(null, null, null, null, null, null, "photo1");
+		String userJsonString = mapper.writeValueAsString(updatedUserDTO);
+
+		given(service.updateLocadorById(anyLong(), any(UserDTO.class))).willReturn(locador);
+
+		servlet.perform(put("/locadores/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(user.getEmail())))
+				.andExpect(jsonPath("user.firstName", is(user.getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(user.getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(user.getPhoneNumber())))
+				.andExpect(jsonPath("user.dateJoined", is(user.getDateJoined())))
+				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(user.getSex())))
+				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
+				.andExpect(jsonPath("role", is(locador.getRole())))
+				.andExpect(jsonPath("reviews", is(locador.getReviews())))
+				.andExpect(jsonPath("verified", is(locador.isVerified())));
+
+		reset(service);
+
 	}
 
 

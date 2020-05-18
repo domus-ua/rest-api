@@ -122,6 +122,7 @@ public class LocadorServiceTest {
 		});
 
 	}
+
 	@Test
 	void testDeleteLocadorById_existentId() throws ResourceNotFoundException {
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
@@ -135,6 +136,63 @@ public class LocadorServiceTest {
 		ResponseEntity<Void> result = service.deleteLocadorById(0L);
 
 		assertThat(ResponseEntity.noContent().build(), hasToString(result.toString()));
+
+	}
+
+	@Test
+	void testUpdateLocador_locadorDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.updateLocadorById(0L, userDTO);
+		});
+
+	}
+
+	@Test
+	void testUpdateLocador_completeUpdate() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		UserDTO updatedUserDTO = new UserDTO("v@ua.pt", "João", "Vasconcelos", "pwd", "123", "M", null);
+
+		User updatedUser = new ModelMapper().map(updatedUserDTO, User.class);
+		Locador updatedLocador = new Locador();
+		updatedLocador.setUser(updatedUser);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locador));
+		when(repository.save(any(Locador.class))).thenReturn(updatedLocador);
+
+		Locador result = service.updateLocadorById(1L, updatedUserDTO);
+		assertThat(updatedLocador.toString(), hasToString(result.toString()));
+
+
+	}
+
+	@Test
+	void testUpdateLocador_partialUpdate() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		UserDTO updatedUserDTO = new UserDTO(null, null, null, null, null, null, "photo1");
+
+		User updatedUser = new ModelMapper().map(updatedUserDTO, User.class);
+		Locador updatedLocador = new Locador();
+		updatedLocador.setUser(updatedUser);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locador));
+		when(repository.save(any(Locador.class))).thenReturn(updatedLocador);
+
+		Locador result = service.updateLocadorById(1L, updatedUserDTO);
+		assertThat(updatedLocador.toString(), hasToString(result.toString()));
 
 	}
 
