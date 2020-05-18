@@ -20,6 +20,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -131,6 +132,68 @@ public class LocadorControllerIT {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testUpdateLocador_locadorDoesNotExist() throws Exception {
+		String userJsonString = mapper.writeValueAsString(userDTO);
+
+		servlet.perform(put("/locadores/0")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+	}
+
+	@Test
+	void testUpdateLocador_completeUpdate() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+
+		String userJsonString = mapper.writeValueAsString(userDTO);
+
+		servlet.perform(put("/locadores/" + locador.getId())
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(locador.getUser().getEmail())))
+				.andExpect(jsonPath("user.firstName", is(locador.getUser().getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(locador.getUser().getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(locador.getUser().getPhoneNumber())))
+				.andExpect(jsonPath("user.lastLogin", is(locador.getUser().getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(locador.getUser().getSex())))
+				.andExpect(jsonPath("user.photo", is(locador.getUser().getPhoto())))
+				.andExpect(jsonPath("role", is(locador.getRole())))
+				.andExpect(jsonPath("verified", is(locador.isVerified())));
+
+
+	}
+
+	@Test
+	void testUpdateLocador_partialUpdate() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		UserDTO updatedUserDTO = new UserDTO(null, null, null, null, null, null, "photo1");
+
+
+		String userJsonString = mapper.writeValueAsString(updatedUserDTO);
+
+		servlet.perform(put("/locadores/" + locador.getId())
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(locador.getUser().getEmail())))
+				.andExpect(jsonPath("user.firstName", is(locador.getUser().getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(locador.getUser().getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(locador.getUser().getPhoneNumber())))
+				.andExpect(jsonPath("user.lastLogin", is(locador.getUser().getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(locador.getUser().getSex())))
+				.andExpect(jsonPath("user.photo", is(updatedUserDTO.getPhoto())))
+				.andExpect(jsonPath("role", is(locador.getRole())))
+				.andExpect(jsonPath("verified", is(locador.isVerified())));
+
+
 	}
 
 }

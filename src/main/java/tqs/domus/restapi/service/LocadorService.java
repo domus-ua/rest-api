@@ -58,4 +58,41 @@ public class LocadorService {
 		return ResponseEntity.noContent().build();
 
 	}
+
+	public Locador updateLocadorById(long id, UserDTO userDTO) throws ResourceNotFoundException {
+		Locador locador = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not " +
+				"found for this" +
+				" " + "id: " + id));
+
+		if (userDTO.getEmail() != null) {
+			locador.getUser().setEmail(userDTO.getEmail());
+		}
+
+		if (userDTO.getFirstName() != null) {
+			locador.getUser().setFirstName(userDTO.getFirstName());
+		}
+
+		if (userDTO.getLastName() != null) {
+			locador.getUser().setLastName(userDTO.getLastName());
+		}
+
+		if (userDTO.getPassword() != null) {
+			locador.getUser().setPassword(userDTO.getPassword());
+		}
+
+		if (userDTO.getPhoneNumber() != null) {
+			locador.getUser().setPhoneNumber(userDTO.getPhoneNumber());
+		}
+
+		if (userDTO.getSex() != null) {
+			locador.getUser().setSex(userDTO.getSex());
+		}
+
+		if (userDTO.getPhoto() != null) {
+			locador.getUser().setPhoto(userDTO.getPhoto());
+		}
+
+		return repository.save(locador);
+
+	}
 }
