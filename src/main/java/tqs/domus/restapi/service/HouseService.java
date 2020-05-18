@@ -110,4 +110,8 @@ public class HouseService {
 
 		return houseRepository.save(house);
 	}
+
+	public List<String> getAllCities() {
+		return houseRepository.findAllCities();
+	}
 }

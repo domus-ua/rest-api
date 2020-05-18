@@ -19,11 +19,16 @@ import tqs.domus.restapi.repository.LocadorRepository;
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
@@ -327,5 +332,24 @@ public class HouseServiceTest {
 		assertThat(houses.toString(), hasToString(result.toString()));
 	}
 
+	@Test
+	void testGetAllCities_isEmpty() {
+		when(repository.findAllCities()).thenReturn(Collections.emptyList());
+		assertThat(service.getAllCities(), is(empty()));
+	}
+
+	@Test
+	void testGetAllCities_isNotEmpty() {
+		List<String> cities = new ArrayList<>();
+		cities.add("Aveiro");
+		cities.add("Viseu");
+
+		when(repository.findAllCities()).thenReturn(cities);
+
+		List<String> result = service.getAllCities();
+
+		assertThat(cities, is(not(empty())));
+		assertThat(cities, is(equalTo(result)));
+	}
 
 }
