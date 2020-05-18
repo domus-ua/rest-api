@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -267,6 +269,34 @@ public class HouseControllerTest {
 				.andExpect(status().isOk());
 
 		reset(service);
+	}
+
+	@Test
+	void testDeleteHouse_houseDoesNotExist() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.deleteHouse(anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(delete("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteHouse_houseExists() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+		String houseJsonString = mapper.writeValueAsString(house);
+
+		given(service.deleteHouse(anyLong())).willReturn(ResponseEntity.noContent().build());
+
+		servlet.perform(delete("/houses/1")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
 	}
 
 }
