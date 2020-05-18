@@ -44,7 +44,7 @@ public class HouseController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteHouse(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+	public ResponseEntity<Void> deleteHouse(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
 		return service.deleteHouse(id);
 	}
 

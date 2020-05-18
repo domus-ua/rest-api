@@ -379,7 +379,7 @@ public class HouseServiceTest {
 
 		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
 		when(repository.save(any(House.class))).thenReturn(house);
-		ResponseEntity<?> result = service.deleteHouse(house.getId());
+		ResponseEntity<Void> result = service.deleteHouse(house.getId());
 		assertThat(ResponseEntity.noContent().build().toString(), hasToString(result.toString()));
 
 
