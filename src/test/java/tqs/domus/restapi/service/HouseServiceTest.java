@@ -355,7 +355,6 @@ public class HouseServiceTest {
 	@Test
 	void testGetHouse_houseDoesNotExist() {
 		when(repository.findById(anyLong())).thenReturn(Optional.empty());
-		HouseDTO houseDTO = new HouseDTO();
 
 		assertThrows(ResourceNotFoundException.class, () -> {
 			service.getHouse(0L);
@@ -363,7 +362,7 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testUpdateHouse_houseExists() throws ResourceNotFoundException {
+	void testGetHouse_houseExists() throws ResourceNotFoundException {
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 		User user = new ModelMapper().map(userDTO, User.class);
 		Locador locador = new Locador();
