@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
@@ -351,5 +352,37 @@ public class HouseServiceTest {
 		assertThat(cities, is(not(empty())));
 		assertThat(cities, is(equalTo(result)));
 	}
+
+    @Test
+    void testDeleteHouse_houseDoesNotExists(){
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> {
+            service.deleteHouse(anyLong());
+        });
+
+    }
+
+    @Test
+    void testDeleteHouse_completeDelete() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(house);
+		ResponseEntity<?> result = service.deleteHouse(house.getId());
+		assertThat(ResponseEntity.noContent().build().toString(), hasToString(result.toString()));
+
+
+    }
 
 }

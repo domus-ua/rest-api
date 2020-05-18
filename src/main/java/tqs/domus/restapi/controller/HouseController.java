@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +44,7 @@ public class HouseController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> updateHouse(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+	public ResponseEntity<?> deleteHouse(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
 		return service.deleteHouse(id);
 	}
 

@@ -111,6 +111,11 @@ public class HouseService {
 
 		return houseRepository.save(house);
 	}
+
+	public List<String> getAllCities() {
+		return houseRepository.findAllCities();
+	}
+
 	public ResponseEntity<?> deleteHouse(long id) throws ResourceNotFoundException {
 		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
 				"for this id: " + id));
