@@ -352,4 +352,40 @@ public class HouseServiceTest {
 		assertThat(cities, is(equalTo(result)));
 	}
 
+	@Test
+	void testGetHouse_houseDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		HouseDTO houseDTO = new HouseDTO();
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.getHouse(0L);
+		});
+	}
+
+	@Test
+	void testUpdateHouse_houseExists() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(house);
+
+		House result = service.getHouse(1L);
+		assertThat(house.toString(), hasToString(result.toString()));
+	}
+
+
 }
