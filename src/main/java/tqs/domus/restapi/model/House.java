@@ -96,4 +96,7 @@ public class House {
 	@JsonIgnore
 	private Contract contract;
 
+	@NotNull
+	private double averageRating = 0.0;
+
 }

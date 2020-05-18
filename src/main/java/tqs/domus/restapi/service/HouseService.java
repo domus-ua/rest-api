@@ -12,6 +12,7 @@ import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocadorRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 /**
  * @author João Vasconcelos
@@ -39,6 +40,21 @@ public class HouseService {
 			throw new ErrorDetails("Missing Parameters");
 		}
 	}
+
+
+	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice,
+								   String orderAttribute, boolean desc) {
+		if (orderAttribute.equals("price") && desc) {
+			return houseRepository.findByAttributesDescPrice(city, nRooms, minPrice, maxPrice);
+		} else if (orderAttribute.equals("price")) {
+			return houseRepository.findByAttributesAscPrice(city, nRooms, minPrice, maxPrice);
+		} else if (orderAttribute.equals("rating") && !desc) {
+			return houseRepository.findByAttributesAscRating(city, nRooms, minPrice, maxPrice);
+		} else {
+			return houseRepository.findByAttributesDescRating(city, nRooms, minPrice, maxPrice);
+		}
+	}
+
 
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
 		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +

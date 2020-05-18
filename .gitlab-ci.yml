@@ -13,8 +13,8 @@ sonarqube-check:
     - mvn -B -q verify sonar:sonar
       -Dsonar.qualitygate.wait=true
       '-Dtest=!%regex[.*UI.*]'
-  allow_failure: true
   only:
+    - merge_requests
     - master
 
 unit-test:

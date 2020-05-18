@@ -21,7 +21,11 @@ import tqs.domus.restapi.repository.UserRepository;
 import tqs.domus.restapi.service.HouseService;
 import tqs.domus.restapi.service.LocadorService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -157,6 +161,67 @@ public class HouseControllerIT {
 				.andExpect(jsonPath("name", is(house.getName())))
 				.andExpect(jsonPath("description", is(house.getDescription())))
 				.andExpect(jsonPath("propertyFeatures", is(house.getPropertyFeatures())));
+	}
+
+	@Test
+	void testSearchHouse_incorrectParameters() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = houseService.registerHouse(houseDTO);
+		House houseMapper = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(houseMapper);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "wrong")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void testSearchHouse_Ok() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = houseService.registerHouse(houseDTO);
+		House houseMapper = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(houseMapper);
+		servlet.perform(get("/houses")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testSearchHouse_PriceOrder() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = houseService.registerHouse(houseDTO);
+		House houseMapper = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(houseMapper);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "price")
+				.param("desc", "true")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testSearchHouse_RatingOrder() throws Exception {
+		List<House> houses = new ArrayList<>();
+		House house = houseService.registerHouse(houseDTO);
+		House houseMapper = new ModelMapper().map(houseDTO, House.class);
+		houses.add(house);
+		String houseJsonString = mapper.writeValueAsString(houseMapper);
+		servlet.perform(get("/houses")
+				.param("orderAttribute", "rating")
+				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
 	}
 
 }
