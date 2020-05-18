@@ -47,13 +47,13 @@ public class House {
 	private String postalCode;
 
 	@NotNull
-	private int nRooms;
+	private int noRooms;
 
 	@NotNull
-	private int nBathrooms;
+	private int noBathrooms;
 
 	@NotNull
-	private int nGarages;
+	private int noGarages;
 
 	@NotNull
 	private double habitableArea;
