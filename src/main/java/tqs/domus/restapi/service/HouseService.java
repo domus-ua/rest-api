@@ -77,15 +77,15 @@ public class HouseService {
 		}
 
 		if (houseDTO.getNoBathrooms() != 0) {
-			house.setNBathrooms(houseDTO.getNoBathrooms());
+			house.setNoBathrooms(houseDTO.getNoBathrooms());
 		}
 
 		if (houseDTO.getNoGarages() != 0) {
-			house.setNGarages(houseDTO.getNoGarages());
+			house.setNoGarages(houseDTO.getNoGarages());
 		}
 
 		if (houseDTO.getNoRooms() != 0) {
-			house.setNRooms(houseDTO.getNoRooms());
+			house.setNoRooms(houseDTO.getNoRooms());
 		}
 
 		if (houseDTO.getPhotos() != null) {
