@@ -52,7 +52,7 @@ public class HouseController {
 
 		String orderAtt = "rating";
 
-		Boolean order = false;
+		boolean order = false;
 		if (desc != null) {
 			order = desc;
 		}
