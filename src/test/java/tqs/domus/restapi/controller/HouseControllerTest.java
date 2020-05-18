@@ -32,7 +32,8 @@ import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author João Vasconcelos
@@ -183,7 +184,6 @@ public class HouseControllerTest {
 				.andExpect(status().isBadRequest());
 
 		reset(service);
-
 	}
 
 	@Test
@@ -200,7 +200,6 @@ public class HouseControllerTest {
 				.andExpect(status().isOk());
 
 		reset(service);
-
 	}
 
 	@Test
@@ -219,7 +218,6 @@ public class HouseControllerTest {
 				.andExpect(status().isOk());
 
 		reset(service);
-
 	}
 
 	@Test
@@ -237,7 +235,6 @@ public class HouseControllerTest {
 				.andExpect(status().isOk());
 
 		reset(service);
-
 	}
 
 }

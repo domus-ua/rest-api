@@ -42,7 +42,8 @@ public class HouseService {
 	}
 
 
-	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice, String orderAttribute, Boolean desc) {
+	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice,
+								   String orderAttribute, boolean desc) {
 		if (orderAttribute.equals("price") && desc) {
 			return houseRepository.findByAttributesDescPrice(city, nRooms, minPrice, maxPrice);
 		} else if (orderAttribute.equals("price")) {

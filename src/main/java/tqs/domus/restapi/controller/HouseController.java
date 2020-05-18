@@ -51,7 +51,7 @@ public class HouseController {
 	) throws ErrorDetails {
 
 		String orderAtt = "rating";
-		
+
 		Boolean order = false;
 		if (desc != null) {
 			order = desc;
