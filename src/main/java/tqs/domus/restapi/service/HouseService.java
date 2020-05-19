@@ -58,8 +58,8 @@ public class HouseService {
 
 
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
-		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
-				"for this id: " + id));
+		House house =
+				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(notFoundErrorMessage(id)));
 
 		if (houseDTO.getCity() != null) {
 			house.setCity(houseDTO.getCity());
@@ -117,18 +117,20 @@ public class HouseService {
 	}
 
 	public House getHouse(long id) throws ResourceNotFoundException {
-		return houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
-				"for this id: " + id));
+		return houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(notFoundErrorMessage(id)));
 	}
 
 	public ResponseEntity<Void> deleteHouse(long id) throws ResourceNotFoundException {
-		House house = houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("House not found " +
-				"for this id: " + id));
+		House house =
+				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(notFoundErrorMessage(id)));
 
 		houseRepository.delete(house);
 
 		return ResponseEntity.noContent().build();
+	}
 
+	private String notFoundErrorMessage(long id) {
+		return "House not found for this id: " + id;
 	}
 
 
