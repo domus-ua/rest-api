@@ -2,6 +2,7 @@ package tqs.domus.restapi.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Vasco Ramos

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,9 +40,18 @@ public class LocatarioController {
 		return service.getLocatarioById(id);
 	}
 
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteLocatarioById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
 		return service.deleteLocatarioById(id);
+	}
+
+
+
+	@PutMapping("/{id}")
+	public Locatario updateLocatarioById(@PathVariable(value = "id") long id,
+										 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
+		return service.updateLocatarioById(id, userDTO);
 	}
 
 

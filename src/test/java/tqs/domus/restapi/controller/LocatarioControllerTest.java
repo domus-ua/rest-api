@@ -24,6 +24,7 @@ import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -139,6 +140,21 @@ public class LocatarioControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());
+	}
+
+	void testUpdateLocatario_LocatarioDoesNotExist() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.updateLocatarioById(anyLong(), any(UserDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(put("/locatarios/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
 
 		reset(service);
 	}
@@ -156,4 +172,68 @@ public class LocatarioControllerTest {
 
 		reset(service);
 	}
+
+	@Test
+	void testUpdateLocatario_completeUpdate() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		String userJsonString = mapper.writeValueAsString(user);
+
+		given(service.updateLocatarioById(anyLong(), any(UserDTO.class))).willReturn(locatario);
+
+		servlet.perform(put("/locatarios/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(user.getEmail())))
+				.andExpect(jsonPath("user.firstName", is(user.getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(user.getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(user.getPhoneNumber())))
+				.andExpect(jsonPath("user.dateJoined", is(user.getDateJoined())))
+				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(user.getSex())))
+				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
+				.andExpect(jsonPath("role", is(locatario.getRole())))
+				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
+				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+
+		reset(service);
+	}
+
+
+	@Test
+	void testUpdateLocatario_partialUpdate() throws Exception {
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		UserDTO updatedUserDTO = new UserDTO(null, null, null, null, null, null, "photo1");
+		String userJsonString = mapper.writeValueAsString(updatedUserDTO);
+
+		given(service.updateLocatarioById(anyLong(), any(UserDTO.class))).willReturn(locatario);
+
+		servlet.perform(put("/locatarios/1")
+				.content(userJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("user.email", is(user.getEmail())))
+				.andExpect(jsonPath("user.firstName", is(user.getFirstName())))
+				.andExpect(jsonPath("user.lastName", is(user.getLastName())))
+				.andExpect(jsonPath("user.phoneNumber", is(user.getPhoneNumber())))
+				.andExpect(jsonPath("user.dateJoined", is(user.getDateJoined())))
+				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
+				.andExpect(jsonPath("user.sex", is(user.getSex())))
+				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
+				.andExpect(jsonPath("role", is(locatario.getRole())))
+				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
+				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+
+		reset(service);
+
+	}
+
+
 }

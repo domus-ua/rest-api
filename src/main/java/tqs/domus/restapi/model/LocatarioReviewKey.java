@@ -54,4 +54,6 @@ public class LocatarioReviewKey implements Serializable {
 		} else return locatarioId.equals(other.locatarioId);
 	}
 	*/
+
+
 }
