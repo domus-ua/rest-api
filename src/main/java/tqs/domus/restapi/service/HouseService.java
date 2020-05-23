@@ -8,11 +8,19 @@ import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.HouseDTO;
+import tqs.domus.restapi.model.HouseReview;
+import tqs.domus.restapi.model.HouseReviewDTO;
+import tqs.domus.restapi.model.HouseReviewKey;
 import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.repository.HouseRepository;
+import tqs.domus.restapi.repository.HouseReviewRepository;
 import tqs.domus.restapi.repository.LocadorRepository;
+import tqs.domus.restapi.repository.LocatarioRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -23,11 +31,20 @@ import java.util.List;
 
 @Service
 public class HouseService {
+	private static final String HOUSE_NOT_FOUND = "House not found for this id: ";
+	private static final String REVIEW_NOT_FOUND = "Review not found";
+
 	@Autowired
 	private HouseRepository houseRepository;
 
 	@Autowired
+	private HouseReviewRepository houseReviewRepository;
+
+	@Autowired
 	private LocadorRepository locadorRepository;
+
+	@Autowired
+	private LocatarioRepository locatarioRepository;
 
 	public House registerHouse(HouseDTO houseDTO) throws ErrorDetails, ResourceNotFoundException {
 		try {
@@ -42,7 +59,6 @@ public class HouseService {
 		}
 	}
 
-
 	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice,
 								   String orderAttribute, boolean desc) {
 		if (orderAttribute.equals("price") && desc) {
@@ -56,10 +72,9 @@ public class HouseService {
 		}
 	}
 
-
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
 		House house =
-				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(notFoundErrorMessage(id)));
+				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
 
 		if (houseDTO.getCity() != null) {
 			house.setCity(houseDTO.getCity());
@@ -117,21 +132,99 @@ public class HouseService {
 	}
 
 	public House getHouse(long id) throws ResourceNotFoundException {
-		return houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(notFoundErrorMessage(id)));
+		return houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
 	}
 
 	public ResponseEntity<Void> deleteHouse(long id) throws ResourceNotFoundException {
 		House house =
-				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(notFoundErrorMessage(id)));
+				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
 
 		houseRepository.delete(house);
 
 		return ResponseEntity.noContent().build();
 	}
 
-	private String notFoundErrorMessage(long id) {
-		return "House not found for this id: " + id;
+	public HouseReview registerReview(HouseReviewDTO houseReviewDTO) throws ErrorDetails, ResourceNotFoundException {
+		try {
+			long locatarioId = houseReviewDTO.getLocatarioId();
+			Locatario locatario = locatarioRepository.findById(locatarioId)
+					.orElseThrow(() -> new ResourceNotFoundException("Locatario not found for this id: " + locatarioId));
+
+			long houseId = houseReviewDTO.getHouseId();
+			House house = houseRepository.findById(houseId)
+					.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + houseId));
+
+			HouseReviewKey key = new HouseReviewKey(locatarioId, houseId);
+
+			HouseReview houseReview = new HouseReview();
+			houseReview.setId(key);
+			houseReview.setComment(houseReviewDTO.getComment());
+			houseReview.setRating(houseReviewDTO.getRating());
+			houseReview.setHouse(house);
+			houseReview.setLocatario(locatario);
+			HouseReview review = houseReviewRepository.save(houseReview);
+
+			double totalRating = house.getReviewsReceived().stream().mapToDouble(HouseReview::getRating).sum();
+			double avgRating = totalRating / house.getReviewsReceived().size();
+			house.setAverageRating(avgRating);
+			houseRepository.save(house);
+
+			return review;
+		} catch (ConstraintViolationException ex) {
+			throw new ErrorDetails("Missing Parameters");
+		}
 	}
 
+	public List<HouseReview> getHouseReviews(long id) throws ResourceNotFoundException {
+		House house =
+				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
+		return house.getReviewsReceived();
+	}
 
+	public HouseReview getHouseReview(long houseId, long locatarioId) throws ResourceNotFoundException {
+		return houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
+				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
+	}
+
+	public HouseReview updateHouseReview(HouseReviewDTO houseReviewDTO) throws ResourceNotFoundException {
+		long locatarioId = houseReviewDTO.getLocatarioId();
+		long houseId = houseReviewDTO.getHouseId();
+
+		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
+				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
+		House house = review.getHouse();
+
+		if (houseReviewDTO.getComment() != null) {
+			review.setComment(houseReviewDTO.getComment());
+		}
+		if (houseReviewDTO.getRating() != null) {
+			review.setRating(houseReviewDTO.getRating());
+		}
+		review.setTimestamp(new Timestamp(Calendar.getInstance().getTime().getTime()));
+		houseReviewRepository.save(review);
+
+		double totalRating = house.getReviewsReceived().stream().mapToDouble(HouseReview::getRating).sum();
+		double avgRating = totalRating / house.getReviewsReceived().size();
+		house.setAverageRating(avgRating);
+		houseRepository.save(house);
+
+		return review;
+
+	}
+
+	public ResponseEntity<Void> deleteHouseReview(long houseId, long locatarioId) throws ResourceNotFoundException {
+		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
+				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
+
+		House house = review.getHouse();
+
+		houseReviewRepository.delete(review);
+
+		double totalRating = house.getReviewsReceived().stream().mapToDouble(HouseReview::getRating).sum();
+		double avgRating = totalRating / house.getReviewsReceived().size();
+		house.setAverageRating(avgRating);
+		houseRepository.save(house);
+
+		return ResponseEntity.noContent().build();
+	}
 }

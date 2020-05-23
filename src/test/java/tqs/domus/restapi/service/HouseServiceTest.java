@@ -389,7 +389,7 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testDeleteHouse_houseDoesNotExists(){
+	void testDeleteHouse_houseDoesNotExists() {
 		when(repository.findById(anyLong())).thenReturn(Optional.empty());
 		assertThrows(ResourceNotFoundException.class, () -> {
 			service.deleteHouse(anyLong());

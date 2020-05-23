@@ -47,7 +47,6 @@ public class LocatarioController {
 	}
 
 
-
 	@PutMapping("/{id}")
 	public Locatario updateLocatarioById(@PathVariable(value = "id") long id,
 										 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {

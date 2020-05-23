@@ -1,9 +1,7 @@
 package tqs.domus.restapi.controller;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +11,6 @@ import tqs.domus.restapi.RestApiApplication;
 import tqs.domus.restapi.model.HouseDTO;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.LocadorDTO;
-import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.UserRepository;
 import tqs.domus.restapi.service.HouseService;
