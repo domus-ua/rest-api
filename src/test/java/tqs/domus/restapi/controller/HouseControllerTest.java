@@ -1,7 +1,6 @@
 package tqs.domus.restapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -274,13 +273,9 @@ public class HouseControllerTest {
 
 	@Test
 	void testDeleteHouse_houseDoesNotExist() throws Exception {
-		House house = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(house);
-
 		given(service.deleteHouse(anyLong())).willThrow(new ResourceNotFoundException("Error"));
 
 		servlet.perform(delete("/houses/1")
-				.content(houseJsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
@@ -288,13 +283,9 @@ public class HouseControllerTest {
 
 	@Test
 	void testDeleteHouse_houseExists() throws Exception {
-		House house = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(house);
-
 		given(service.deleteHouse(anyLong())).willReturn(ResponseEntity.noContent().build());
 
 		servlet.perform(delete("/houses/1")
-				.content(houseJsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());
@@ -318,6 +309,30 @@ public class HouseControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void testGetHouseReviews_houseExists() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		given(service.getHouseReviews(anyLong())).willReturn(house.getReviewsReceived());
+
+		servlet.perform(get("/houses/reviews/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+	}
+
+	@Test
+	void testGetHouseReviews_houseDoesNotExist() throws Exception {
+		given(service.getHouseReviews(anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/houses/reviews/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
 	}
 
 }

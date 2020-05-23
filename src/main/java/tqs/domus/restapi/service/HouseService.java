@@ -164,9 +164,7 @@ public class HouseService {
 			houseReview.setLocatario(locatario);
 			HouseReview review = houseReviewRepository.save(houseReview);
 
-			double totalRating = house.getReviewsReceived().stream().mapToDouble(HouseReview::getRating).sum();
-			double avgRating = totalRating / house.getReviewsReceived().size();
-			house.setAverageRating(avgRating);
+			house.setAverageRating(calculateAvgRating(house.getReviewsReceived()));
 			houseRepository.save(house);
 
 			return review;
@@ -203,9 +201,7 @@ public class HouseService {
 		review.setTimestamp(new Timestamp(Calendar.getInstance().getTime().getTime()));
 		houseReviewRepository.save(review);
 
-		double totalRating = house.getReviewsReceived().stream().mapToDouble(HouseReview::getRating).sum();
-		double avgRating = totalRating / house.getReviewsReceived().size();
-		house.setAverageRating(avgRating);
+		house.setAverageRating(calculateAvgRating(house.getReviewsReceived()));
 		houseRepository.save(house);
 
 		return review;
@@ -216,15 +212,22 @@ public class HouseService {
 		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
 				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
 
-		House house = review.getHouse();
-
 		houseReviewRepository.delete(review);
 
-		double totalRating = house.getReviewsReceived().stream().mapToDouble(HouseReview::getRating).sum();
-		double avgRating = totalRating / house.getReviewsReceived().size();
-		house.setAverageRating(avgRating);
+		House house = houseRepository.findById(houseId).orElseThrow(()
+				-> new ResourceNotFoundException(HOUSE_NOT_FOUND + houseId));
+
+		house.setAverageRating(calculateAvgRating(house.getReviewsReceived()));
 		houseRepository.save(house);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	private double calculateAvgRating(List<HouseReview> reviews) {
+		if (reviews == null) {
+			return 0D;
+		}
+		double totalRating = reviews.stream().mapToDouble(HouseReview::getRating).sum();
+		return totalRating / reviews.size();
 	}
 }

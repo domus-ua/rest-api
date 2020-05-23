@@ -60,7 +60,6 @@ public class HouseControllerIT {
 
 	private Locador locador;
 
-
 	@BeforeEach
 	public void initDb() throws ErrorDetails {
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
@@ -252,11 +251,7 @@ public class HouseControllerIT {
 
 	@Test
 	void testDeleteHouse_houseDoesNotExist() throws Exception {
-		House house = new ModelMapper().map(houseDTO, House.class);
-		House houseMapper = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(houseMapper);
 		servlet.perform(delete("/houses/1")
-				.content(houseJsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
@@ -265,29 +260,8 @@ public class HouseControllerIT {
 	@Test
 	void testDeleteHouse_houseExists() throws Exception {
 		House house = houseService.registerHouse(houseDTO);
-		House houseMapper = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(houseMapper);
 
 		servlet.perform(delete("/houses/" + house.getId())
-				.content(houseJsonString)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNoContent());
-	}
-
-	@Test
-	void testDeleteHouseReview_reviewDoesNotExist() throws Exception {
-		servlet.perform(delete("/houses/reviews/1/1")
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
-	}
-
-	@Test
-	void testDeleteHouseReview_reviewExists() throws Exception {
-		House house = houseService.registerHouse(houseDTO);
-
-		servlet.perform(delete("/houses/reviews/1/1" + house.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());
