@@ -1,6 +1,7 @@
 package tqs.domus.restapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,6 +295,26 @@ public class HouseControllerTest {
 
 		servlet.perform(delete("/houses/1")
 				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewDoesNotExist() throws Exception {
+		given(service.deleteHouseReview(anyLong(), anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(delete("/houses/reviews/0/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewExists() throws Exception {
+		given(service.deleteHouseReview(anyLong(), anyLong())).willReturn(ResponseEntity.noContent().build());
+
+		servlet.perform(delete("/houses/reviews/1/1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());
