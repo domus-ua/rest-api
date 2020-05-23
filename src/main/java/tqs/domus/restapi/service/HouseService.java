@@ -212,10 +212,9 @@ public class HouseService {
 		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
 				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
 
-		houseReviewRepository.delete(review);
+		House house = review.getHouse();
 
-		House house = houseRepository.findById(houseId).orElseThrow(()
-				-> new ResourceNotFoundException(HOUSE_NOT_FOUND + houseId));
+		houseReviewRepository.delete(review);
 
 		house.setAverageRating(calculateAvgRating(house.getReviewsReceived()));
 		houseRepository.save(house);
@@ -224,7 +223,7 @@ public class HouseService {
 	}
 
 	private double calculateAvgRating(List<HouseReview> reviews) {
-		if (reviews == null) {
+		if (reviews == null || reviews.isEmpty()) {
 			return 0D;
 		}
 		double totalRating = reviews.stream().mapToDouble(HouseReview::getRating).sum();

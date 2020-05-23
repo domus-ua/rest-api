@@ -26,6 +26,7 @@ import tqs.domus.restapi.service.LocadorService;
 import tqs.domus.restapi.service.LocatarioService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -113,6 +114,47 @@ public class ReviewsIT {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
+	}
+
+
+	@Test
+	void testGetHouseReviews_houseDoesNotExist() throws Exception {
+		servlet.perform(get("/houses/reviews/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouseReviews_houseExists() throws Exception {
+		servlet.perform(get("/houses/reviews/" + house.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testGetHouseReview_houseDoesNotExist() throws Exception {
+		servlet.perform(get("/houses/reviews/0/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouseReview_locatarioDoesNotExist() throws Exception {
+		servlet.perform(get("/houses/reviews/" + house.getId() + "/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouseReview_houseAndLocatarioExists() throws Exception {
+		servlet.perform(get("/houses/reviews/" + house.getId() + "/" + locatario1.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
 	}
 
 	@Test()
