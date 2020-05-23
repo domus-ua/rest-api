@@ -2,6 +2,7 @@ package tqs.domus.restapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.RestApiApplication;
+import tqs.domus.restapi.exception.ErrorDetails;
+import tqs.domus.restapi.model.House;
+import tqs.domus.restapi.model.HouseDTO;
+import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.LocadorDTO;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
+import tqs.domus.restapi.model.WishListDTO;
 import tqs.domus.restapi.repository.UserRepository;
+import tqs.domus.restapi.service.HouseService;
+import tqs.domus.restapi.service.LocadorService;
 import tqs.domus.restapi.service.LocatarioService;
 
+import javax.transaction.Transactional;
+
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,8 +48,6 @@ public class LocatarioControllerIT {
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
-	private final UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
-
 	@Autowired
 	private MockMvc servlet;
 
@@ -46,6 +56,28 @@ public class LocatarioControllerIT {
 
 	@Autowired
 	private LocatarioService service;
+
+	@Autowired
+	private LocadorService locadorService;
+
+	@Autowired
+	private HouseService houseService;
+
+	private Locador locador;
+
+	private HouseDTO houseDTO;
+
+	private UserDTO userDTO;
+
+	@BeforeEach
+	public void initDb() throws ErrorDetails {
+		userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		UserDTO userDTO2 = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		locador = locadorService.registerLocador(userDTO2);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+		houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+	}
 
 	@AfterEach
 	public void resetDb() {
@@ -169,7 +201,6 @@ public class LocatarioControllerIT {
 		Locatario locatario = service.registerLocatario(userDTO);
 		UserDTO updatedUserDTO = new UserDTO(null, null, null, null, null, null, "photo1");
 
-
 		String userJsonString = mapper.writeValueAsString(updatedUserDTO);
 
 		servlet.perform(put("/locatarios/" + locatario.getId())
@@ -185,8 +216,56 @@ public class LocatarioControllerIT {
 				.andExpect(jsonPath("user.sex", is(locatario.getUser().getSex())))
 				.andExpect(jsonPath("user.photo", is(updatedUserDTO.getPhoto())))
 				.andExpect(jsonPath("role", is(locatario.getRole())));
-
-
 	}
 
+	@Test
+	void testAddHouseToWishList_houseDoesNotExist() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+		WishListDTO wishListDTO = new WishListDTO(locatario.getId(), 0L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(post("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testAddHouseToWishList_locatarioDoesNotExist() throws Exception {
+		House house = houseService.registerHouse(houseDTO);
+		WishListDTO wishListDTO = new WishListDTO(0L, house.getId());
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(post("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testAddHouseToWishList_locatarioAndHouseExist() throws Exception {
+		House house = houseService.registerHouse(houseDTO);
+		Locatario locatario = service.registerLocatario(userDTO);
+		WishListDTO wishListDTO = new WishListDTO(locatario.getId(), house.getId());
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(post("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testGetWishList_locatarioDoesNotExist() throws Exception {
+		servlet.perform(get("/locatarios/wishlist/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
 }

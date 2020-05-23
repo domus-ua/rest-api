@@ -11,11 +11,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
+import tqs.domus.restapi.model.HouseDTO;
+import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.LocadorDTO;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
+import tqs.domus.restapi.model.WishListDTO;
+import tqs.domus.restapi.service.HouseService;
 import tqs.domus.restapi.service.LocatarioService;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -36,7 +46,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(value = LocatarioController.class)
 public class LocatarioControllerTest {
-
 	private final ObjectMapper mapper = new ObjectMapper();
 
 	private final UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
@@ -46,6 +55,9 @@ public class LocatarioControllerTest {
 
 	@MockBean
 	private LocatarioService service;
+
+	@MockBean
+	private HouseService houseService;
 
 	@Test
 	void testCreateLocatario_EmailIsFree() throws Exception {
@@ -142,7 +154,8 @@ public class LocatarioControllerTest {
 				.andExpect(status().isNoContent());
 	}
 
-	void testUpdateLocatario_LocatarioDoesNotExist() throws Exception {
+	@Test
+	void testUpdateLocatario_locatarioDoesNotExist() throws Exception {
 		User user = new ModelMapper().map(userDTO, User.class);
 		Locatario locatario = new Locatario();
 		locatario.setUser(user);
@@ -161,9 +174,7 @@ public class LocatarioControllerTest {
 
 	@Test
 	void testDeleteLocatarioById_inexistentId() throws Exception {
-
 		given(service.deleteLocatarioById(anyLong())).willThrow(new ResourceNotFoundException("Error"));
-
 
 		servlet.perform(delete("/locatarios/0")
 				.contentType(MediaType.APPLICATION_JSON)
@@ -202,7 +213,6 @@ public class LocatarioControllerTest {
 		reset(service);
 	}
 
-
 	@Test
 	void testUpdateLocatario_partialUpdate() throws Exception {
 		User user = new ModelMapper().map(userDTO, User.class);
@@ -232,8 +242,79 @@ public class LocatarioControllerTest {
 				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
 
 		reset(service);
-
 	}
 
+	@Test
+	void testAddHouseToWishList_houseDoesNotExist() throws Exception {
+		given(service.addToWishlist(any(WishListDTO.class))).willThrow(new ResourceNotFoundException("Error"));
 
+		WishListDTO wishListDTO = new WishListDTO(1L, 0L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(post("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testAddHouseToWishList_locatarioDoesNotExist() throws Exception {
+		given(service.addToWishlist(any(WishListDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		WishListDTO wishListDTO = new WishListDTO(0L, 1L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(post("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testAddHouseToWishList_locatarioAndHouseExist() throws Exception {
+		WishListDTO wishListDTO = new WishListDTO(1L, 1L);
+
+		given(service.addToWishlist(any(WishListDTO.class))).willReturn(true);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(post("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testGetWishList_locatarioDoesNotExist() throws Exception {
+		given(service.getLocatarioWishlist(anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/locatarios/wishlist/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetWishList_locatarioExists() throws Exception {
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		List<House> wishlist = new ArrayList<>() {{
+			add(house);
+		}};
+
+		given(service.getLocatarioWishlist(anyLong())).willReturn(wishlist);
+
+		servlet.perform(get("/locatarios/wishlist/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].street", is(house.getStreet())));
+	}
 }

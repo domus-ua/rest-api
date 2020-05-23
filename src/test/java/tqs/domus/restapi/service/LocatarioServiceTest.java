@@ -9,13 +9,19 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
+import tqs.domus.restapi.model.HouseDTO;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
+import tqs.domus.restapi.model.WishListDTO;
+import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,9 +47,11 @@ public class LocatarioServiceTest {
 	@Mock(lenient = true)
 	private UserRepository userRepository;
 
+	@Mock(lenient = true)
+	private HouseRepository houseRepository;
+
 	@InjectMocks
 	private LocatarioService service;
-
 
 	@Test
 	void testRegisterLocatario_emailIsTaken() {
@@ -73,7 +81,7 @@ public class LocatarioServiceTest {
 	}
 
 	@Test
-	void testRegisterLocatario_missingParameters() throws ErrorDetails {
+	void testRegisterLocatario_missingParameters() {
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", null, "M", null);
 		when(userRepository.existsByEmail(anyString())).thenReturn(false);
 
@@ -120,7 +128,7 @@ public class LocatarioServiceTest {
 		User user = new ModelMapper().map(userDTO, User.class);
 		Locatario locatario = new Locatario();
 		locatario.setUser(user);
-		
+
 		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
 
 		ResponseEntity<?> result = service.deleteLocatarioById(0L);
@@ -140,7 +148,7 @@ public class LocatarioServiceTest {
 	}
 
 	@Test
-	void testUpdateLocatario_completeUpdate() throws ErrorDetails, ResourceNotFoundException {
+	void testUpdateLocatario_completeUpdate() throws ResourceNotFoundException {
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 
 		User user = new ModelMapper().map(userDTO, User.class);
@@ -160,7 +168,6 @@ public class LocatarioServiceTest {
 
 	}
 
-
 	@Test
 	void testDeleteLocatarioById_inexistentId() {
 		when(repository.findById(anyLong())).thenReturn(Optional.empty());
@@ -169,7 +176,6 @@ public class LocatarioServiceTest {
 			service.deleteLocatarioById(0L);
 		});
 	}
-
 
 	@Test
 	void testUpdateLocatario_partialUpdate() throws ResourceNotFoundException {
@@ -190,6 +196,55 @@ public class LocatarioServiceTest {
 
 		Locatario result = service.updateLocatarioById(1L, userDTO);
 		assertThat(updatedLocatario.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testAddToWishList_locatarioDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.addToWishlist(new WishListDTO());
+		});
+	}
+
+	@Test
+	void testAddToWishList_houseDoesNotExist() {
+		when(houseRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.addToWishlist(new WishListDTO());
+		});
+	}
+
+	@Test
+	void testGetWishList_locatarioDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.getLocatarioById(1L);
+		});
+	}
+
+	@Test
+	void testGetWishList_locatarioExists() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		List<House> wishlist = new ArrayList<>() {{
+			add(house);
+		}};
+		locatario.setWishlist(wishlist);
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
+
+		List<House> result = service.getLocatarioWishlist(locatario.getId());
+		assertThat(wishlist.toString(), hasToString(result.toString()));
 
 	}
 

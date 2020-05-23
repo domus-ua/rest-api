@@ -47,7 +47,7 @@ public class LocadorController {
 
 	@PutMapping("/{id}")
 	public Locador updateLocadorById(@PathVariable(value = "id") long id,
-										 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
+									 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
 		return service.updateLocadorById(id, userDTO);
 	}
 
