@@ -20,9 +20,9 @@ import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasToString;
@@ -237,15 +237,57 @@ public class LocatarioServiceTest {
 				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
 		House house = new ModelMapper().map(houseDTO, House.class);
 
-		List<House> wishlist = new ArrayList<>() {{
+		Set<House> wishlist = new HashSet<>() {{
 			add(house);
 		}};
 		locatario.setWishlist(wishlist);
 		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
 
-		List<House> result = service.getLocatarioWishlist(locatario.getId());
+		Set<House> result = service.getLocatarioWishlist(locatario.getId());
 		assertThat(wishlist.toString(), hasToString(result.toString()));
+	}
 
+	@Test
+	void testDeleteHouseFromWishList_locatarioDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.deleteFromWishlist(new WishListDTO());
+		});
+	}
+
+	@Test
+	void testDeleteHouseFromWishList_houseDoesNotExist() {
+		when(houseRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.deleteFromWishlist(new WishListDTO());
+		});
+	}
+
+	@Test
+	void testDeleteHouseFromWishList_locatarioAndHouseExist() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
+		House house = new ModelMapper().map(houseDTO, House.class);
+		locatario.setWishlist(new HashSet<>() {{
+			add(house);
+		}});
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
+		when(houseRepository.findById(anyLong())).thenReturn(Optional.of(house));
+
+		WishListDTO wishListDTO = new WishListDTO(locatario.getId(), house.getId());
+
+		ResponseEntity<?> result = service.deleteFromWishlist(wishListDTO);
+
+		assertThat(ResponseEntity.noContent().build(), hasToString(result.toString()));
 	}
 
 }

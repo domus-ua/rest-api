@@ -16,7 +16,7 @@ import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vasco Ramos
@@ -111,7 +111,7 @@ public class LocatarioService {
 		House house = houseRepository.findById(houseId).orElseThrow(() -> new ResourceNotFoundException("House not " +
 				"found for this id: " + locatarioId));
 
-		List<House> wishlist = locatario.getWishlist();
+		Set<House> wishlist = locatario.getWishlist();
 		wishlist.add(house);
 		locatario.setWishlist(wishlist);
 		repository.save(locatario);
@@ -119,10 +119,27 @@ public class LocatarioService {
 		return true;
 	}
 
-	public List<House> getLocatarioWishlist(long locatarioId) throws ResourceNotFoundException {
+	public Set<House> getLocatarioWishlist(long locatarioId) throws ResourceNotFoundException {
 		Locatario locatario = repository.findById(locatarioId).orElseThrow(() -> new ResourceNotFoundException(
 				"Locatário not found for this id: " + locatarioId));
 
 		return locatario.getWishlist();
+	}
+
+	public ResponseEntity<Void> deleteFromWishlist(WishListDTO wishListDTO) throws ResourceNotFoundException {
+		Long locatarioId = wishListDTO.getLocatarioId();
+		Locatario locatario = repository.findById(locatarioId).orElseThrow(() -> new ResourceNotFoundException(
+				"Locatário not found for this id: " + locatarioId));
+
+		Long houseId = wishListDTO.getHouseId();
+		House house = houseRepository.findById(houseId).orElseThrow(() -> new ResourceNotFoundException("House not " +
+				"found for this id: " + locatarioId));
+
+		Set<House> wishlist = locatario.getWishlist();
+		wishlist.remove(house);
+		locatario.setWishlist(wishlist);
+		repository.save(locatario);
+
+		return ResponseEntity.noContent().build();
 	}
 }

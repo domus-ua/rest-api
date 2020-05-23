@@ -19,7 +19,7 @@ import tqs.domus.restapi.model.WishListDTO;
 import tqs.domus.restapi.service.LocatarioService;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vasco Ramos
@@ -61,9 +61,15 @@ public class LocatarioController {
 	}
 
 	@GetMapping("/wishlist/{id}")
-	public List<House> getLocatarioWishList(@PathVariable(value = "id") long locatarioId)
+	public Set<House> getLocatarioWishList(@PathVariable(value = "id") long locatarioId)
 			throws ResourceNotFoundException {
 		return service.getLocatarioWishlist(locatarioId);
+	}
+
+	@DeleteMapping("/wishlist")
+	public ResponseEntity<Void> deleteHouseFromWishList(@Valid @RequestBody WishListDTO wishListDTO)
+			throws ResourceNotFoundException {
+		return service.deleteFromWishlist(wishListDTO);
 	}
 
 }

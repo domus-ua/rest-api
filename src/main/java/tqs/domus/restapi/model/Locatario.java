@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vasco Ramos
@@ -47,7 +48,7 @@ public class Locatario {
 			joinColumns = @JoinColumn(name = "locatario_id"),
 			inverseJoinColumns = @JoinColumn(name = "house_id"))
 	@JsonIgnore
-	private List<House> wishlist;
+	private Set<House> wishlist;
 
 	@OneToMany(mappedBy = "locatario")
 	private List<LocatarioReview> reviewsReceived;

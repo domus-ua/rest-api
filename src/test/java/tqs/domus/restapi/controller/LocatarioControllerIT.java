@@ -25,9 +25,6 @@ import tqs.domus.restapi.service.HouseService;
 import tqs.domus.restapi.service.LocadorService;
 import tqs.domus.restapi.service.LocatarioService;
 
-import javax.transaction.Transactional;
-
-import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -264,6 +261,34 @@ public class LocatarioControllerIT {
 	@Test
 	void testGetWishList_locatarioDoesNotExist() throws Exception {
 		servlet.perform(get("/locatarios/wishlist/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteFromWishList_locatarioDoesNotExist() throws Exception {
+		House house = houseService.registerHouse(houseDTO);
+		WishListDTO wishListDTO = new WishListDTO(0L, house.getId());
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteFromWishList_houseDoesNotExist() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+		WishListDTO wishListDTO = new WishListDTO(locatario.getId(), 0L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
