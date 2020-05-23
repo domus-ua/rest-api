@@ -275,4 +275,22 @@ public class HouseControllerIT {
 				.andExpect(status().isNoContent());
 	}
 
+	@Test
+	void testDeleteHouseReview_reviewDoesNotExist() throws Exception {
+		servlet.perform(delete("/houses/reviews/1/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewExists() throws Exception {
+		House house = houseService.registerHouse(houseDTO);
+
+		servlet.perform(delete("/houses/reviews/1/1" + house.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+	}
+
 }
