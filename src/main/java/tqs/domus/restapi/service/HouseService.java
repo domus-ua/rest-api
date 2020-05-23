@@ -195,6 +195,7 @@ public class HouseService {
 		if (houseReviewDTO.getComment() != null) {
 			review.setComment(houseReviewDTO.getComment());
 		}
+
 		if (houseReviewDTO.getRating() != null) {
 			review.setRating(houseReviewDTO.getRating());
 		}

@@ -25,9 +25,12 @@ import tqs.domus.restapi.service.HouseService;
 import tqs.domus.restapi.service.LocadorService;
 import tqs.domus.restapi.service.LocatarioService;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -155,6 +158,47 @@ public class ReviewsIT {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testUpdateHouseReview_reviewDoesNotExist() throws Exception {
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(0L, 0L, null, null);
+
+		String houseReviewJsonString = mapper.writeValueAsString(reviewDTO2);
+
+		servlet.perform(put("/houses/reviews/")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testUpdateHouseReview_noUpdate() throws Exception {
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(house.getId(), locatario1.getId(), null, null);
+
+		String houseReviewJsonString = mapper.writeValueAsString(reviewDTO2);
+
+		servlet.perform(put("/houses/reviews/")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testUpdateHouseReview_fullUpdate() throws Exception {
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(house.getId(), locatario1.getId(), "New Comment", 4.0);
+
+		String houseReviewJsonString = mapper.writeValueAsString(reviewDTO2);
+
+		servlet.perform(put("/houses/reviews/")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("comment", is(reviewDTO2.getComment())))
+				.andExpect(jsonPath("rating", is(reviewDTO2.getRating())));
 	}
 
 	@Test()
