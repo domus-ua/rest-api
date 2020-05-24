@@ -190,4 +190,22 @@ public class LocadorControllerIT {
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 	}
 
+
+	@Test
+	void testGetLocadorHouses_locadorDoesNotExist() throws Exception {
+		servlet.perform(get("/locadores/houses/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetLocadorHouses_locadorExists() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+
+		servlet.perform(get("/locadores/houses/" + locador.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
 }

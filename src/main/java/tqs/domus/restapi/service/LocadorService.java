@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -13,6 +14,7 @@ import tqs.domus.restapi.repository.LocadorRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 /**
  * @author Vasco Ramos
@@ -92,5 +94,12 @@ public class LocadorService {
 
 		return repository.save(locador);
 
+	}
+
+	public List<House> getLocadorHouses(long locadorId) throws ResourceNotFoundException {
+		Locador locador = repository.findById(locadorId).orElseThrow(
+				() -> new ResourceNotFoundException("Locador not found for this id: " + locadorId));
+
+		return locador.getHouses();
 	}
 }
