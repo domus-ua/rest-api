@@ -20,8 +20,8 @@ import tqs.domus.restapi.model.WishListDTO;
 import tqs.domus.restapi.service.HouseService;
 import tqs.domus.restapi.service.LocatarioService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -294,7 +294,7 @@ public class LocatarioControllerTest {
 				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
 		House house = new ModelMapper().map(houseDTO, House.class);
 
-		List<House> wishlist = new ArrayList<>() {{
+		Set<House> wishlist = new HashSet<>() {{
 			add(house);
 		}};
 
@@ -305,5 +305,50 @@ public class LocatarioControllerTest {
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$[0].street", is(house.getStreet())));
+	}
+
+	@Test
+	void testDeleteHouseFromWishList_houseDoesNotExist() throws Exception {
+		given(service.deleteFromWishlist(any(WishListDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		WishListDTO wishListDTO = new WishListDTO(1L, 0L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteHouseFromWishList_locatarioDoesNotExist() throws Exception {
+		given(service.deleteFromWishlist(any(WishListDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		WishListDTO wishListDTO = new WishListDTO(0L, 1L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteHouseFromWishList_locatarioAndHouseExist() throws Exception {
+		WishListDTO wishListDTO = new WishListDTO(1L, 1L);
+
+		given(service.deleteFromWishlist(any(WishListDTO.class))).willReturn(ResponseEntity.noContent().build());
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
 	}
 }

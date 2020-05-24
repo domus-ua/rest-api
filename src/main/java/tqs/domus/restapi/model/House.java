@@ -21,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vasco Ramos
@@ -88,7 +89,7 @@ public class House {
 
 	@ManyToMany(mappedBy = "wishlist")
 	@JsonIgnore
-	private List<Locatario> saves;
+	private Set<Locatario> saves;
 
 	@OneToMany(mappedBy = "house")
 	private List<HouseReview> reviewsReceived;

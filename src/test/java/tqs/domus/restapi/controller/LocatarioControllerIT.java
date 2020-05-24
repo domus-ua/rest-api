@@ -263,4 +263,32 @@ public class LocatarioControllerIT {
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
+
+	@Test
+	void testDeleteFromWishList_locatarioDoesNotExist() throws Exception {
+		House house = houseService.registerHouse(houseDTO);
+		WishListDTO wishListDTO = new WishListDTO(0L, house.getId());
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteFromWishList_houseDoesNotExist() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+		WishListDTO wishListDTO = new WishListDTO(locatario.getId(), 0L);
+
+		String jsonString = mapper.writeValueAsString(wishListDTO);
+
+		servlet.perform(delete("/locatarios/wishlist")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
 }
