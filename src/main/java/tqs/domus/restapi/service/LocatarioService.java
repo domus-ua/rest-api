@@ -6,13 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
+import tqs.domus.restapi.model.WishListDTO;
+import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 /**
  * @author Vasco Ramos
@@ -22,10 +26,16 @@ import javax.validation.ConstraintViolationException;
 
 @Service
 public class LocatarioService {
+	private static final String LOCATARIO_NOT_FOUND = "Locatário not found for this id: ";
+
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private LocatarioRepository repository;
+
+	@Autowired
+	private HouseRepository houseRepository;
 
 	public Locatario registerLocatario(UserDTO userDTO) throws ErrorDetails {
 		if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -46,14 +56,12 @@ public class LocatarioService {
 	}
 
 	public Locatario getLocatarioById(long id) throws ResourceNotFoundException {
-		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locatário not found for this" +
-				" " + "id: " + id));
+		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(LOCATARIO_NOT_FOUND + id));
 	}
 
 	public ResponseEntity<Void> deleteLocatarioById(long id) throws ResourceNotFoundException {
-		Locatario locatario = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locatário not " +
-				"found for this" +
-				" " + "id: " + id));
+		Locatario locatario = repository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(LOCATARIO_NOT_FOUND + id));
 		userRepository.delete(locatario.getUser());
 
 		return ResponseEntity.noContent().build();
@@ -61,10 +69,8 @@ public class LocatarioService {
 	}
 
 	public Locatario updateLocatarioById(long id, UserDTO userDTO) throws ResourceNotFoundException {
-		Locatario locatario = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locatário not " +
-				"found for this" +
-				" " + "id: " + id));
-
+		Locatario locatario = repository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(LOCATARIO_NOT_FOUND + id));
 
 		if (userDTO.getEmail() != null) {
 			locatario.getUser().setEmail(userDTO.getEmail());
@@ -95,5 +101,29 @@ public class LocatarioService {
 		}
 
 		return repository.save(locatario);
+	}
+
+	public boolean addToWishlist(WishListDTO wishListDTO) throws ResourceNotFoundException {
+		Long locatarioId = wishListDTO.getLocatarioId();
+		Locatario locatario = repository.findById(locatarioId)
+				.orElseThrow(() -> new ResourceNotFoundException(LOCATARIO_NOT_FOUND + locatarioId));
+
+		Long houseId = wishListDTO.getHouseId();
+		House house = houseRepository.findById(houseId)
+				.orElseThrow(() -> new ResourceNotFoundException("House not found for this id: " + houseId));
+
+		List<House> wishlist = locatario.getWishlist();
+		wishlist.add(house);
+		locatario.setWishlist(wishlist);
+		repository.save(locatario);
+
+		return true;
+	}
+
+	public List<House> getLocatarioWishlist(long locatarioId) throws ResourceNotFoundException {
+		Locatario locatario = repository.findById(locatarioId)
+				.orElseThrow(() -> new ResourceNotFoundException(LOCATARIO_NOT_FOUND + locatarioId));
+
+		return locatario.getWishlist();
 	}
 }

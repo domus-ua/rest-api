@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.UserDTO;
+import tqs.domus.restapi.model.WishListDTO;
 import tqs.domus.restapi.service.LocatarioService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Vasco Ramos
@@ -40,12 +43,10 @@ public class LocatarioController {
 		return service.getLocatarioById(id);
 	}
 
-
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteLocatarioById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
 		return service.deleteLocatarioById(id);
 	}
-
 
 	@PutMapping("/{id}")
 	public Locatario updateLocatarioById(@PathVariable(value = "id") long id,
@@ -53,5 +54,16 @@ public class LocatarioController {
 		return service.updateLocatarioById(id, userDTO);
 	}
 
+	@PostMapping("/wishlist")
+	public String addHouseToWishList(@Valid @RequestBody WishListDTO wishListDTO) throws ResourceNotFoundException {
+		service.addToWishlist(wishListDTO);
+		return "House added successfully to wishlist";
+	}
+
+	@GetMapping("/wishlist/{id}")
+	public List<House> getLocatarioWishList(@PathVariable(value = "id") long locatarioId)
+			throws ResourceNotFoundException {
+		return service.getLocatarioWishlist(locatarioId);
+	}
 
 }
