@@ -70,7 +70,6 @@ public class LocadorControllerTest {
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
-				.andExpect(jsonPath("reviews", is(locador.getReviews())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 
 		reset(service);
@@ -125,7 +124,6 @@ public class LocadorControllerTest {
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
-				.andExpect(jsonPath("reviews", is(locador.getReviews())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 
 		reset(service);
@@ -198,7 +196,6 @@ public class LocadorControllerTest {
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
-				.andExpect(jsonPath("reviews", is(locador.getReviews())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 
 		reset(service);
@@ -230,7 +227,6 @@ public class LocadorControllerTest {
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
-				.andExpect(jsonPath("reviews", is(locador.getReviews())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 
 		reset(service);

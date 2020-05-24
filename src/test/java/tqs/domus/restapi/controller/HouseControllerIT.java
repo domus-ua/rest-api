@@ -25,7 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,7 +59,6 @@ public class HouseControllerIT {
 	private HouseDTO houseDTO;
 
 	private Locador locador;
-
 
 	@BeforeEach
 	public void initDb() throws ErrorDetails {
@@ -249,10 +251,7 @@ public class HouseControllerIT {
 
 	@Test
 	void testDeleteHouse_houseDoesNotExist() throws Exception {
-		House houseMapper = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(houseMapper);
 		servlet.perform(delete("/houses/1")
-				.content(houseJsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
@@ -261,11 +260,8 @@ public class HouseControllerIT {
 	@Test
 	void testDeleteHouse_houseExists() throws Exception {
 		House house = houseService.registerHouse(houseDTO);
-		House houseMapper = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(houseMapper);
 
 		servlet.perform(delete("/houses/" + house.getId())
-				.content(houseJsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());

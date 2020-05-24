@@ -59,14 +59,14 @@ public class LocatarioService {
 		return ResponseEntity.noContent().build();
 
 	}
+
 	public Locatario updateLocatarioById(long id, UserDTO userDTO) throws ResourceNotFoundException {
 		Locatario locatario = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locatário not " +
 				"found for this" +
 				" " + "id: " + id));
 
-		
 
-		if (userDTO.getEmail()!= null) {
+		if (userDTO.getEmail() != null) {
 			locatario.getUser().setEmail(userDTO.getEmail());
 		}
 

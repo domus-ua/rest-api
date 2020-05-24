@@ -1,10 +1,10 @@
 package tqs.domus.restapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +15,8 @@ import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.HouseDTO;
+import tqs.domus.restapi.model.HouseReview;
+import tqs.domus.restapi.model.HouseReviewDTO;
 import tqs.domus.restapi.service.HouseService;
 
 import javax.validation.Valid;
@@ -48,7 +50,6 @@ public class HouseController {
 		return service.deleteHouse(id);
 	}
 
-
 	@GetMapping("")
 	public List<House> searchHouse(@RequestParam(required = false) String city,
 								   @RequestParam(required = false) Integer nRooms,
@@ -81,5 +82,36 @@ public class HouseController {
 		return service.getHouse(id);
 	}
 
+	@PostMapping("/reviews")
+	public HouseReview createHouseReview(@Valid @RequestBody HouseReviewDTO houseReviewDTO) throws ErrorDetails,
+			ResourceNotFoundException {
+		return service.registerReview(houseReviewDTO);
+	}
+
+	@GetMapping("/reviews/{houseId}")
+	public List<HouseReview> getHouseReviews(@PathVariable(value = "houseId") long houseId) throws
+			ResourceNotFoundException {
+		return service.getHouseReviews(houseId);
+	}
+
+	@GetMapping("/reviews/{houseId}/{locatarioId}")
+	public HouseReview getHouseReview(@PathVariable(value = "houseId") long houseId,
+									  @PathVariable(value = "locatarioId") long locatarioId) throws
+			ResourceNotFoundException {
+		return service.getHouseReview(houseId, locatarioId);
+	}
+
+	@PutMapping("/reviews/")
+	public HouseReview updateHouseReview(@Valid @RequestBody HouseReviewDTO houseReviewDTO) throws
+			ResourceNotFoundException {
+		return service.updateHouseReview(houseReviewDTO);
+	}
+
+	@DeleteMapping("/reviews/{houseId}/{locatarioId}")
+	public ResponseEntity<Void> deleteHouseReview(@PathVariable(value = "houseId") long houseId,
+												  @PathVariable(value = "locatarioId") long locatarioId) throws
+			ResourceNotFoundException {
+		return service.deleteHouseReview(houseId, locatarioId);
+	}
 
 }

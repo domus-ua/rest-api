@@ -120,7 +120,7 @@ public class LocatarioServiceTest {
 		User user = new ModelMapper().map(userDTO, User.class);
 		Locatario locatario = new Locatario();
 		locatario.setUser(user);
-		
+
 		when(repository.findById(anyLong())).thenReturn(Optional.of(locatario));
 
 		ResponseEntity<?> result = service.deleteLocatarioById(0L);

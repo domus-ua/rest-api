@@ -1,5 +1,6 @@
 package tqs.domus.restapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -33,6 +34,7 @@ public class HouseReview {
 	@ManyToOne
 	@MapsId("house_id")
 	@JoinColumn(name = "house_id")
+	@JsonIgnore
 	private House house;
 
 	@NotNull

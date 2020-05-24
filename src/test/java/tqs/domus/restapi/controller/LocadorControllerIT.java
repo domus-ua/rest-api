@@ -72,7 +72,6 @@ public class LocadorControllerIT {
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
-				.andExpect(jsonPath("reviews", is(locador.getReviews())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
 	}
 
@@ -143,7 +142,6 @@ public class LocadorControllerIT {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
-
 	}
 
 	@Test
@@ -166,8 +164,6 @@ public class LocadorControllerIT {
 				.andExpect(jsonPath("user.photo", is(locador.getUser().getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
-
-
 	}
 
 	@Test
@@ -192,8 +188,6 @@ public class LocadorControllerIT {
 				.andExpect(jsonPath("user.photo", is(updatedUserDTO.getPhoto())))
 				.andExpect(jsonPath("role", is(locador.getRole())))
 				.andExpect(jsonPath("verified", is(locador.isVerified())));
-
-
 	}
 
 }

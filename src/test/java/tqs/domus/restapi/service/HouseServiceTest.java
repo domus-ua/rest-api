@@ -11,12 +11,17 @@ import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.HouseDTO;
+import tqs.domus.restapi.model.HouseReview;
+import tqs.domus.restapi.model.HouseReviewDTO;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.LocadorDTO;
+import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.HouseRepository;
+import tqs.domus.restapi.repository.HouseReviewRepository;
 import tqs.domus.restapi.repository.LocadorRepository;
+import tqs.domus.restapi.repository.LocatarioRepository;
 
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -51,7 +56,13 @@ public class HouseServiceTest {
 	private LocadorRepository locadorRepository;
 
 	@Mock(lenient = true)
+	private LocatarioRepository locatarioRepository;
+
+	@Mock(lenient = true)
 	private HouseRepository repository;
+
+	@Mock(lenient = true)
+	private HouseReviewRepository reviewRepository;
 
 	@InjectMocks
 	private HouseService service;
@@ -381,12 +392,11 @@ public class HouseServiceTest {
 	}
 
 	@Test
-	void testDeleteHouse_houseDoesNotExists(){
+	void testDeleteHouse_houseDoesNotExists() {
 		when(repository.findById(anyLong())).thenReturn(Optional.empty());
 		assertThrows(ResourceNotFoundException.class, () -> {
 			service.deleteHouse(anyLong());
 		});
-
 	}
 
 	@Test
@@ -411,7 +421,213 @@ public class HouseServiceTest {
 		when(repository.save(any(House.class))).thenReturn(house);
 		ResponseEntity<Void> result = service.deleteHouse(house.getId());
 		assertThat(ResponseEntity.noContent().build().toString(), hasToString(result.toString()));
+	}
 
+	@Test
+	void testCreateHouseReview_locatarioDoesNotExist() {
+		HouseReviewDTO reviewDTO = new HouseReviewDTO(0L, 0L, "string", 0D);
+
+		when(locatarioRepository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.registerReview(reviewDTO);
+		});
+	}
+
+	@Test
+	void testCreateHouseReview_houseDoesNotExist() {
+		HouseReviewDTO reviewDTO = new HouseReviewDTO(0L, 0L, "string", 0D);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.registerReview(reviewDTO);
+		});
+	}
+
+	@Test
+	void testCreateHouseReview_missingParameters() {
+		UserDTO userDTO = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+		when(locatarioRepository.findById(anyLong())).thenReturn(Optional.of(locatario));
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+
+		HouseReviewDTO reviewDTO = new HouseReviewDTO(0L, 0L, "string", 0D);
+
+		when(reviewRepository.save(any(HouseReview.class))).thenThrow(ConstraintViolationException.class);
+		assertThrows(ErrorDetails.class, () -> {
+			service.registerReview(reviewDTO);
+		});
+	}
+
+	@Test
+	void testGetHouseReviews_houseDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.getHouseReviews(0L);
+		});
+	}
+
+	@Test
+	void testGetHouseReviews_houseExists() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		userDTO = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(house);
+
+		HouseReview review = new HouseReview();
+		review.setLocatario(locatario);
+		review.setHouse(house);
+		review.setComment("comment");
+		review.setRating(0D);
+
+		List<HouseReview> reviews = new ArrayList<>() {{
+			add(review);
+		}};
+
+		house.setReviewsReceived(reviews);
+
+		List<HouseReview> result = service.getHouseReviews(house.getId());
+
+		assertThat(reviews.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testGetHouseReview_houseDoesNotExist() {
+		when(repository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.getHouseReview(0L, 0L);
+		});
+	}
+
+	@Test
+	void testGetHouseReview_locatarioDoesNotExist() {
+		when(locatarioRepository.findById(anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.getHouseReview(0L, 0L);
+		});
+	}
+
+	@Test
+	void testGetHouseReview_reviewExists() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		userDTO = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(house);
+
+		HouseReview review = new HouseReview();
+		review.setLocatario(locatario);
+		review.setHouse(house);
+		review.setComment("comment");
+		review.setRating(0D);
+
+		List<HouseReview> reviews = new ArrayList<>() {{
+			add(review);
+		}};
+
+		house.setReviewsReceived(reviews);
+
+		when(reviewRepository.findByHouseIdAndLocatarioId(anyLong(), anyLong())).thenReturn(Optional.of(review));
+
+		HouseReview result = service.getHouseReview(house.getId(), locatario.getId());
+
+		assertThat(review.toString(), hasToString(result.toString()));
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewDoesNotExist() {
+		when(reviewRepository.findByHouseIdAndLocatarioId(anyLong(), anyLong())).thenReturn(Optional.empty());
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.deleteHouseReview(anyLong(), anyLong());
+		});
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewExists() throws ResourceNotFoundException {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+		LocadorDTO locadorDTO = new LocadorDTO(user.getId());
+
+		userDTO = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		user = new ModelMapper().map(userDTO, User.class);
+		Locatario locatario = new Locatario();
+		locatario.setUser(user);
+
+		List<String> photos = new ArrayList<>() {{
+			add("photo1");
+		}};
+
+		when(locadorRepository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(house));
+		when(repository.save(any(House.class))).thenReturn(house);
+
+		HouseReview review = new HouseReview();
+		review.setLocatario(locatario);
+		review.setHouse(house);
+		review.setComment("comment");
+		review.setRating(0D);
+
+		List<HouseReview> reviews = new ArrayList<>() {{
+			add(review);
+		}};
+
+		house.setReviewsReceived(reviews);
+
+		when(reviewRepository.findByHouseIdAndLocatarioId(anyLong(), anyLong())).thenReturn(Optional.of(review));
+
+		ResponseEntity<Void> result = service.deleteHouseReview(house.getId(), locatario.getId());
+
+		assertThat(ResponseEntity.noContent().build().toString(), hasToString(result.toString()));
 	}
 
 }

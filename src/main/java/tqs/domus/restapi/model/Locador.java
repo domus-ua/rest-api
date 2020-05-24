@@ -52,5 +52,6 @@ public class Locador {
 	private String role = "locador";
 
 	@OneToMany(mappedBy = "locador")
+	@JsonIgnore
 	private List<LocatarioReview> reviews;
 }
