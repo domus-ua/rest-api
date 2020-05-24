@@ -150,7 +150,6 @@
                     </excludes>
                 </configuration>
 
-
                 <executions>
                     <execution>
                         <goals>

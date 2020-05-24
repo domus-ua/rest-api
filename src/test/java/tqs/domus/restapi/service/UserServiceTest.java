@@ -135,9 +135,6 @@ public class UserServiceTest {
 
 	@Test
 	void testLogin_ExistentInconsistentUserEmail() throws ErrorDetails, ResourceNotFoundException {
-		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
-		User user = new ModelMapper().map(userDTO, User.class);
-
 		when(repository.existsByEmail(anyString())).thenReturn(true);
 
 		assertThrows(ResourceNotFoundException.class, () -> {

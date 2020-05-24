@@ -100,9 +100,7 @@ public class LocatarioControllerIT {
 				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
-				.andExpect(jsonPath("role", is(locatario.getRole())))
-				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
-				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+				.andExpect(jsonPath("role", is(locatario.getRole())));
 	}
 
 	@Test

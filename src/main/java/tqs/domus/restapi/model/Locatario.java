@@ -51,9 +51,11 @@ public class Locatario {
 	private Set<House> wishlist;
 
 	@OneToMany(mappedBy = "locatario")
+	@JsonIgnore
 	private List<LocatarioReview> reviewsReceived;
 
 	@OneToMany(mappedBy = "locatario")
+	@JsonIgnore
 	private List<HouseReview> reviews;
 
 	@NotNull
