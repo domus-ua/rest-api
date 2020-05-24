@@ -16,7 +16,6 @@ import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
-
 import java.util.Set;
 
 /**
