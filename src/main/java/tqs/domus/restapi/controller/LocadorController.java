@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.service.LocadorService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author Vasco Ramos
@@ -41,15 +43,20 @@ public class LocadorController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteLocadorById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+	public ResponseEntity<Void> deleteLocadorById(@PathVariable(value = "id") long id)
+			throws ResourceNotFoundException {
 		return service.deleteLocadorById(id);
 	}
 
 	@PutMapping("/{id}")
-	public Locador updateLocadorById(@PathVariable(value = "id") long id,
-									 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
+	public Locador updateLocadorById(@PathVariable(value = "id") long id, @Valid @RequestBody UserDTO userDTO)
+			throws ResourceNotFoundException {
 		return service.updateLocadorById(id, userDTO);
 	}
 
+	@GetMapping("/houses/{id}")
+	public List<House> getLocadorHouses(@PathVariable(value = "id") long locadorId) throws ResourceNotFoundException {
+		return service.getLocadorHouses(locadorId);
+	}
 
 }

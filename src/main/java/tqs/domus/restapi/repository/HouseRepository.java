@@ -19,8 +19,7 @@ import java.util.List;
 public interface HouseRepository extends JpaRepository<House, Long> {
 
 	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or h.noRooms = " +
-			":nRooms)" +
-			" and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or h.price <= :maxPrice)" +
+			":nRooms) and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or h.price <= :maxPrice)" +
 			" ORDER BY h.price ASC")
 	List<House> findByAttributesAscPrice(@Param("city") String city,
 										 @Param("nRooms") Integer nRooms,
@@ -28,8 +27,7 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 										 @Param("maxPrice") Double maxPrice);
 
 	@Query("SELECT h FROM House h WHERE (:city is null or h.city = :city) and (:nRooms is null or h.noRooms = " +
-			":nRooms)" +
-			" and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or h.price <= :maxPrice)" +
+			":nRooms) and (:minPrice is null or h.price >= :minPrice) and (:maxPrice is null or h.price <= :maxPrice)" +
 			" ORDER BY h.price DESC")
 	List<House> findByAttributesDescPrice(@Param("city") String city,
 										  @Param("nRooms") Integer nRooms,

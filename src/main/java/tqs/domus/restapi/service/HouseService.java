@@ -59,8 +59,8 @@ public class HouseService {
 		}
 	}
 
-	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice,
-								   String orderAttribute, boolean desc) {
+	public List<House> searchHouse(String city, Integer nRooms, Double minPrice, Double maxPrice, String orderAttribute,
+			boolean desc) {
 		if (orderAttribute.equals("price") && desc) {
 			return houseRepository.findByAttributesDescPrice(city, nRooms, minPrice, maxPrice);
 		} else if (orderAttribute.equals("price")) {
@@ -73,8 +73,8 @@ public class HouseService {
 	}
 
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
-		House house =
-				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
+		House house = houseRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
 
 		if (houseDTO.getCity() != null) {
 			house.setCity(houseDTO.getCity());
@@ -136,8 +136,8 @@ public class HouseService {
 	}
 
 	public ResponseEntity<Void> deleteHouse(long id) throws ResourceNotFoundException {
-		House house =
-				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
+		House house = houseRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
 
 		houseRepository.delete(house);
 
@@ -147,8 +147,8 @@ public class HouseService {
 	public HouseReview registerReview(HouseReviewDTO houseReviewDTO) throws ErrorDetails, ResourceNotFoundException {
 		try {
 			long locatarioId = houseReviewDTO.getLocatarioId();
-			Locatario locatario = locatarioRepository.findById(locatarioId)
-					.orElseThrow(() -> new ResourceNotFoundException("Locatario not found for this id: " + locatarioId));
+			Locatario locatario = locatarioRepository.findById(locatarioId).orElseThrow(
+					() -> new ResourceNotFoundException("Locatario not found for this id: " + locatarioId));
 
 			long houseId = houseReviewDTO.getHouseId();
 			House house = houseRepository.findById(houseId)
@@ -174,22 +174,22 @@ public class HouseService {
 	}
 
 	public List<HouseReview> getHouseReviews(long id) throws ResourceNotFoundException {
-		House house =
-				houseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
+		House house = houseRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
 		return house.getReviewsReceived();
 	}
 
 	public HouseReview getHouseReview(long houseId, long locatarioId) throws ResourceNotFoundException {
-		return houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
-				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
+		return houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId)
+				.orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND));
 	}
 
 	public HouseReview updateHouseReview(HouseReviewDTO houseReviewDTO) throws ResourceNotFoundException {
 		long locatarioId = houseReviewDTO.getLocatarioId();
 		long houseId = houseReviewDTO.getHouseId();
 
-		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
-				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
+		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId)
+				.orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND));
 		House house = review.getHouse();
 
 		if (houseReviewDTO.getComment() != null) {
@@ -210,8 +210,8 @@ public class HouseService {
 	}
 
 	public ResponseEntity<Void> deleteHouseReview(long houseId, long locatarioId) throws ResourceNotFoundException {
-		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId).orElseThrow(()
-				-> new ResourceNotFoundException(REVIEW_NOT_FOUND));
+		HouseReview review = houseReviewRepository.findByHouseIdAndLocatarioId(houseId, locatarioId)
+				.orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND));
 
 		House house = review.getHouse();
 

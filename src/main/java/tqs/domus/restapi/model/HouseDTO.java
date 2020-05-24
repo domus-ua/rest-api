@@ -31,4 +31,3 @@ public class HouseDTO {
 	private List<String> photos;
 	private LocadorDTO locador;
 }
-
