@@ -249,7 +249,6 @@ public class HouseControllerIT {
 
 	@Test
 	void testDeleteHouse_houseDoesNotExist() throws Exception {
-		House house = new ModelMapper().map(houseDTO, House.class);
 		House houseMapper = new ModelMapper().map(houseDTO, House.class);
 		String houseJsonString = mapper.writeValueAsString(houseMapper);
 		servlet.perform(delete("/houses/1")

@@ -7,8 +7,6 @@ import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
-import tqs.domus.restapi.repository.LocadorRepository;
-import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import java.sql.Timestamp;
@@ -24,12 +22,6 @@ import java.util.Calendar;
 public class UserService {
 	@Autowired
 	private UserRepository repository;
-
-	@Autowired
-	private LocadorRepository locadorRepository;
-
-	@Autowired
-	private LocatarioRepository locatarioRepository;
 
 	public User registerUser(UserDTO userDTO) throws ErrorDetails {
 		if (repository.existsByEmail(userDTO.getEmail())) {
