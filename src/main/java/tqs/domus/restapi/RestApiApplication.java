@@ -18,8 +18,7 @@ public class RestApiApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**")
-						.allowedMethods("DELETE", "POST", "PUT", "GET");
+				registry.addMapping("/**").allowedMethods("DELETE", "POST", "PUT", "GET");
 			}
 		};
 	}

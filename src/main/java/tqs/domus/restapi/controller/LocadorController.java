@@ -41,15 +41,15 @@ public class LocadorController {
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteLocadorById(@PathVariable(value = "id") long id) throws ResourceNotFoundException {
+	public ResponseEntity<Void> deleteLocadorById(@PathVariable(value = "id") long id)
+			throws ResourceNotFoundException {
 		return service.deleteLocadorById(id);
 	}
 
 	@PutMapping("/{id}")
-	public Locador updateLocadorById(@PathVariable(value = "id") long id,
-									 @Valid @RequestBody UserDTO userDTO) throws ResourceNotFoundException {
+	public Locador updateLocadorById(@PathVariable(value = "id") long id, @Valid @RequestBody UserDTO userDTO)
+			throws ResourceNotFoundException {
 		return service.updateLocadorById(id, userDTO);
 	}
-
 
 }

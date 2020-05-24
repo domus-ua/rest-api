@@ -40,8 +40,8 @@ public class HouseController {
 	}
 
 	@PutMapping("/{id}")
-	public House updateHouse(@PathVariable(value = "id") long id,
-							 @Valid @RequestBody HouseDTO houseDTO) throws ResourceNotFoundException {
+	public House updateHouse(@PathVariable(value = "id") long id, @Valid @RequestBody HouseDTO houseDTO)
+			throws ResourceNotFoundException {
 		return service.updateHouse(id, houseDTO);
 	}
 
@@ -52,12 +52,9 @@ public class HouseController {
 
 	@GetMapping("")
 	public List<House> searchHouse(@RequestParam(required = false) String city,
-								   @RequestParam(required = false) Integer nRooms,
-								   @RequestParam(required = false) Double minPrice,
-								   @RequestParam(required = false) Double maxPrice,
-								   @RequestParam(required = false) String orderAttribute,
-								   @RequestParam(required = false) Boolean desc
-	) throws ErrorDetails {
+			@RequestParam(required = false) Integer nRooms, @RequestParam(required = false) Double minPrice,
+			@RequestParam(required = false) Double maxPrice, @RequestParam(required = false) String orderAttribute,
+			@RequestParam(required = false) Boolean desc) throws ErrorDetails {
 
 		String orderAtt = "rating";
 
@@ -83,34 +80,32 @@ public class HouseController {
 	}
 
 	@PostMapping("/reviews")
-	public HouseReview createHouseReview(@Valid @RequestBody HouseReviewDTO houseReviewDTO) throws ErrorDetails,
-			ResourceNotFoundException {
+	public HouseReview createHouseReview(@Valid @RequestBody HouseReviewDTO houseReviewDTO)
+			throws ErrorDetails, ResourceNotFoundException {
 		return service.registerReview(houseReviewDTO);
 	}
 
 	@GetMapping("/reviews/{houseId}")
-	public List<HouseReview> getHouseReviews(@PathVariable(value = "houseId") long houseId) throws
-			ResourceNotFoundException {
+	public List<HouseReview> getHouseReviews(@PathVariable(value = "houseId") long houseId)
+			throws ResourceNotFoundException {
 		return service.getHouseReviews(houseId);
 	}
 
 	@GetMapping("/reviews/{houseId}/{locatarioId}")
 	public HouseReview getHouseReview(@PathVariable(value = "houseId") long houseId,
-									  @PathVariable(value = "locatarioId") long locatarioId) throws
-			ResourceNotFoundException {
+			@PathVariable(value = "locatarioId") long locatarioId) throws ResourceNotFoundException {
 		return service.getHouseReview(houseId, locatarioId);
 	}
 
 	@PutMapping("/reviews/")
-	public HouseReview updateHouseReview(@Valid @RequestBody HouseReviewDTO houseReviewDTO) throws
-			ResourceNotFoundException {
+	public HouseReview updateHouseReview(@Valid @RequestBody HouseReviewDTO houseReviewDTO)
+			throws ResourceNotFoundException {
 		return service.updateHouseReview(houseReviewDTO);
 	}
 
 	@DeleteMapping("/reviews/{houseId}/{locatarioId}")
 	public ResponseEntity<Void> deleteHouseReview(@PathVariable(value = "houseId") long houseId,
-												  @PathVariable(value = "locatarioId") long locatarioId) throws
-			ResourceNotFoundException {
+			@PathVariable(value = "locatarioId") long locatarioId) throws ResourceNotFoundException {
 		return service.deleteHouseReview(houseId, locatarioId);
 	}
 

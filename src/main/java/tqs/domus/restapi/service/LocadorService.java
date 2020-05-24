@@ -44,14 +44,13 @@ public class LocadorService {
 	}
 
 	public Locador getLocadorById(long id) throws ResourceNotFoundException {
-		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not found for this" +
-				" " + "id: " + id));
+		return repository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Locador not found for this" + " " + "id: " + id));
 	}
 
 	public ResponseEntity<Void> deleteLocadorById(long id) throws ResourceNotFoundException {
-		Locador locador = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not " +
-				"found for this" +
-				" " + "id: " + id));
+		Locador locador = repository.findById(id).orElseThrow(
+				() -> new ResourceNotFoundException("Locador not " + "found for this" + " " + "id: " + id));
 
 		userRepository.delete(locador.getUser());
 
@@ -60,9 +59,8 @@ public class LocadorService {
 	}
 
 	public Locador updateLocadorById(long id, UserDTO userDTO) throws ResourceNotFoundException {
-		Locador locador = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Locador not " +
-				"found for this" +
-				" " + "id: " + id));
+		Locador locador = repository.findById(id).orElseThrow(
+				() -> new ResourceNotFoundException("Locador not " + "found for this" + " " + "id: " + id));
 
 		if (userDTO.getEmail() != null) {
 			locador.getUser().setEmail(userDTO.getEmail());

@@ -17,4 +17,3 @@ public interface LocadorRepository extends JpaRepository<Locador, Long> {
 
 	boolean existsByUser(User user);
 }
-

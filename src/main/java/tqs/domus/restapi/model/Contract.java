@@ -52,5 +52,4 @@ public class Contract {
 	@NotNull
 	private Timestamp endDate;
 
-
 }
