@@ -1,6 +1,7 @@
 package tqs.domus.restapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.HouseDTO;
+import tqs.domus.restapi.model.HouseReview;
+import tqs.domus.restapi.model.HouseReviewDTO;
 import tqs.domus.restapi.model.LocadorDTO;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -64,6 +67,11 @@ public class HouseControllerTest {
 	@MockBean
 	private HouseService service;
 
+	@AfterEach
+	void resetService() {
+		reset(service);
+	}
+
 	@Test
 	void testCreateHouse_correctParameters() throws Exception {
 		House house = new ModelMapper().map(houseDTO, House.class);
@@ -108,7 +116,6 @@ public class HouseControllerTest {
 
 		reset(service);
 	}
-
 
 	@Test
 	void testCreateHouse_locadorDoesNotExist() throws Exception {
@@ -273,13 +280,9 @@ public class HouseControllerTest {
 
 	@Test
 	void testDeleteHouse_houseDoesNotExist() throws Exception {
-		House house = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(house);
-
 		given(service.deleteHouse(anyLong())).willThrow(new ResourceNotFoundException("Error"));
 
 		servlet.perform(delete("/houses/1")
-				.content(houseJsonString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
@@ -287,13 +290,188 @@ public class HouseControllerTest {
 
 	@Test
 	void testDeleteHouse_houseExists() throws Exception {
-		House house = new ModelMapper().map(houseDTO, House.class);
-		String houseJsonString = mapper.writeValueAsString(house);
-
 		given(service.deleteHouse(anyLong())).willReturn(ResponseEntity.noContent().build());
 
 		servlet.perform(delete("/houses/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNoContent());
+	}
+
+	@Test
+	void testCreateHouseReview_houseDoesNotExist() throws Exception {
+		HouseReviewDTO houseReviewDTO = new HouseReviewDTO(0L, 0L, "string", 0D);
+		String houseReviewJsonString = mapper.writeValueAsString(houseReviewDTO);
+
+		given(service.registerReview(any(HouseReviewDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(post("/houses/reviews")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testCreateHouseReview_locatarioDoesNotExist() throws Exception {
+		HouseReviewDTO houseReviewDTO = new HouseReviewDTO(0L, 0L, "string", 0D);
+		String houseReviewJsonString = mapper.writeValueAsString(houseReviewDTO);
+
+		given(service.registerReview(any(HouseReviewDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(post("/houses/reviews")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testCreateHouseReview_missingParameters() throws Exception {
+		HouseReviewDTO houseReviewDTO = new HouseReviewDTO(0L, 0L, "string", 0D);
+		String houseReviewJsonString = mapper.writeValueAsString(houseReviewDTO);
+
+		given(service.registerReview(any(HouseReviewDTO.class))).willThrow(new ErrorDetails("Error"));
+
+		servlet.perform(post("/houses/reviews")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void testCreateHouseReview_correctInput() throws Exception {
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(0L, 0L, "Review", 3.0);
+		String houseJsonString = mapper.writeValueAsString(reviewDTO2);
+		HouseReview review = new ModelMapper().map(reviewDTO2, HouseReview.class);
+
+		given(service.registerReview(any(HouseReviewDTO.class))).willReturn(review);
+
+		servlet.perform(post("/houses/reviews")
 				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("comment", is(reviewDTO2.getComment())))
+				.andExpect(jsonPath("rating", is(reviewDTO2.getRating())));
+	}
+
+	@Test
+	void testGetHouseReviews_houseExists() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		given(service.getHouseReviews(anyLong())).willReturn(house.getReviewsReceived());
+
+		servlet.perform(get("/houses/reviews/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testGetHouseReviews_houseDoesNotExist() throws Exception {
+		given(service.getHouseReviews(anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/houses/reviews/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouseReview_houseDoesNotExist() throws Exception {
+		given(service.getHouseReview(anyLong(), anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/houses/reviews/0/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouseReview_locatarioDoesNotExist() throws Exception {
+		given(service.getHouseReview(anyLong(), anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(get("/houses/reviews/0/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testGetHouseReview_houseAndLocatarioExists() throws Exception {
+		House house = new ModelMapper().map(houseDTO, House.class);
+
+		given(service.getHouseReviews(anyLong())).willReturn(house.getReviewsReceived());
+
+		servlet.perform(get("/houses/reviews/1/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testUpdateHouseReview_reviewDoesNotExist() throws Exception {
+		given(service.updateHouseReview(any(HouseReviewDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(0L, 0L, null, null);
+		String houseReviewJsonString = mapper.writeValueAsString(reviewDTO2);
+
+		servlet.perform(put("/houses/reviews/")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testUpdateHouseReview_noUpdate() throws Exception {
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(0L, 0L, "Review", 3.0);
+		HouseReview review = new ModelMapper().map(reviewDTO2, HouseReview.class);
+
+		given(service.updateHouseReview(any(HouseReviewDTO.class))).willReturn(review);
+
+		String houseReviewJsonString = mapper.writeValueAsString(reviewDTO2);
+
+		servlet.perform(put("/houses/reviews/")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testUpdateHouseReview_completeUpdate() throws Exception {
+		HouseReviewDTO reviewDTO2 = new HouseReviewDTO(0L, 0L, "Review", 3.0);
+		HouseReview review = new ModelMapper().map(reviewDTO2, HouseReview.class);
+
+		given(service.updateHouseReview(any(HouseReviewDTO.class))).willReturn(review);
+
+		String houseReviewJsonString = mapper.writeValueAsString(reviewDTO2);
+
+		servlet.perform(put("/houses/reviews/")
+				.content(houseReviewJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewDoesNotExist() throws Exception {
+		given(service.deleteHouseReview(anyLong(), anyLong())).willThrow(new ResourceNotFoundException("Error"));
+
+		servlet.perform(delete("/houses/reviews/0/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testDeleteHouseReview_reviewExists() throws Exception {
+		given(service.deleteHouseReview(anyLong(), anyLong())).willReturn(ResponseEntity.noContent().build());
+
+		servlet.perform(delete("/houses/reviews/1/1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNoContent());

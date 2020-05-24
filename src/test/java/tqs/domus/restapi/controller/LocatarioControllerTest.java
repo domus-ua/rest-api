@@ -13,8 +13,6 @@ import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.HouseDTO;
-import tqs.domus.restapi.model.Locador;
-import tqs.domus.restapi.model.LocadorDTO;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -25,7 +23,6 @@ import tqs.domus.restapi.service.LocatarioService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -81,9 +78,7 @@ public class LocatarioControllerTest {
 				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
-				.andExpect(jsonPath("role", is(locatario.getRole())))
-				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
-				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+				.andExpect(jsonPath("role", is(locatario.getRole())));
 
 		reset(service);
 	}
@@ -124,9 +119,7 @@ public class LocatarioControllerTest {
 				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
-				.andExpect(jsonPath("role", is(locatario.getRole())))
-				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
-				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+				.andExpect(jsonPath("role", is(locatario.getRole())));
 
 		reset(service);
 	}
@@ -206,9 +199,7 @@ public class LocatarioControllerTest {
 				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
-				.andExpect(jsonPath("role", is(locatario.getRole())))
-				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
-				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+				.andExpect(jsonPath("role", is(locatario.getRole())));
 
 		reset(service);
 	}
@@ -237,9 +228,7 @@ public class LocatarioControllerTest {
 				.andExpect(jsonPath("user.lastLogin", is(user.getLastLogin())))
 				.andExpect(jsonPath("user.sex", is(user.getSex())))
 				.andExpect(jsonPath("user.photo", is(user.getPhoto())))
-				.andExpect(jsonPath("role", is(locatario.getRole())))
-				.andExpect(jsonPath("reviews", is(locatario.getReviews())))
-				.andExpect(jsonPath("reviewsReceived", is(locatario.getReviewsReceived())));
+				.andExpect(jsonPath("role", is(locatario.getRole())));
 
 		reset(service);
 	}

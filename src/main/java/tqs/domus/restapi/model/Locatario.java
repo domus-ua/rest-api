@@ -50,9 +50,11 @@ public class Locatario {
 	private List<House> wishlist;
 
 	@OneToMany(mappedBy = "locatario")
+	@JsonIgnore
 	private List<LocatarioReview> reviewsReceived;
 
 	@OneToMany(mappedBy = "locatario")
+	@JsonIgnore
 	private List<HouseReview> reviews;
 
 	@NotNull
