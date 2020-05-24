@@ -236,8 +236,6 @@ public class HouseServiceTest {
 				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house = new ModelMapper().map(houseDTO, House.class);
 		houses.add(house);
-		HouseDTO houseDTO2 = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
-				, 330, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house2 = new ModelMapper().map(houseDTO, House.class);
 		houses.add(house2);
 
@@ -267,8 +265,6 @@ public class HouseServiceTest {
 				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house = new ModelMapper().map(houseDTO, House.class);
 		houses.add(house);
-		HouseDTO houseDTO2 = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
-				, 330, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house2 = new ModelMapper().map(houseDTO, House.class);
 		houses.add(house2);
 
@@ -299,8 +295,6 @@ public class HouseServiceTest {
 		House house = new ModelMapper().map(houseDTO, House.class);
 		house.setAverageRating(5.0);
 		houses.add(house);
-		HouseDTO houseDTO2 = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
-				, 330, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house2 = new ModelMapper().map(houseDTO, House.class);
 		house2.setAverageRating(3.5);
 		houses.add(house2);
@@ -332,8 +326,6 @@ public class HouseServiceTest {
 		House house = new ModelMapper().map(houseDTO, House.class);
 		house.setAverageRating(5.0);
 		houses.add(house);
-		HouseDTO houseDTO2 = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
-				, 330, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", photos, locadorDTO);
 		House house2 = new ModelMapper().map(houseDTO, House.class);
 		house2.setAverageRating(3.5);
 		houses.add(house2);
