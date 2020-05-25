@@ -6,11 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.Contract;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.Locatario;
+import tqs.domus.restapi.model.RentDTO;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
+import tqs.domus.restapi.repository.ContractRepository;
+import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocadorRepository;
+import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
@@ -29,8 +35,18 @@ public class LocadorService {
 
 	@Autowired
 	private UserRepository userRepository;
+
 	@Autowired
 	private LocadorRepository repository;
+
+	@Autowired
+	private LocatarioRepository locatarioRepository;
+
+	@Autowired
+	private HouseRepository houseRepository;
+
+	@Autowired
+	private ContractRepository contractRepository;
 
 	public Locador registerLocador(UserDTO userDTO) throws ErrorDetails {
 		if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -123,6 +139,39 @@ public class LocadorService {
 		} else {
 			return "Your request was denied!";
 		}
+	}
+
+	public Contract rentHouse(RentDTO rentDTO) throws ResourceNotFoundException, ErrorDetails {
+		long locadorId = rentDTO.getLocadorId();
+		Locador locador = repository.findById(locadorId).orElseThrow(
+				() -> new ResourceNotFoundException(LOCADOR_NOT_FOUND + locadorId));
+
+		long houseId = rentDTO.getHouseId();
+		House house = houseRepository.findById(houseId).orElseThrow(
+				() -> new ResourceNotFoundException("House not found for this id: " + houseId));
+
+		long locatarioId = rentDTO.getLocatarioId();
+		Locatario locatario = locatarioRepository.findById(locatarioId).orElseThrow(
+				() -> new ResourceNotFoundException("Locatario not found for this id: " + locatarioId));
+
+		if (!locador.getHouses().contains(house)) {
+			throw new ErrorDetails("House not associated with specified locador");
+		}
+
+		if (rentDTO.getStartDate().compareTo(rentDTO.getEndDate()) >= 0) {
+			throw new ErrorDetails("Start date must be older than End date");
+		}
+
+		if (!house.isAvailable()) {
+			throw new ErrorDetails("Specified house is not currently available");
+		}
+
+		Contract contract = new ModelMapper().map(rentDTO, Contract.class);
+		contract.setLocador(locador);
+		contract.setLocatario(locatario);
+		contract.setHouse(house);
+
+		return contractRepository.save(contract);
 	}
 
 	private double calculateAvgRating(List<House> houses) {

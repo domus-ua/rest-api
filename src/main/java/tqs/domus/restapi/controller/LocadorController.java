@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.Contract;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.RentDTO;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.service.LocadorService;
 
@@ -62,6 +64,11 @@ public class LocadorController {
 	@GetMapping("/check-quality/{id}")
 	public String checkQualityParameter(@PathVariable(value = "id") long locadorId) throws ResourceNotFoundException {
 		return service.checkQualityParameter(locadorId);
+	}
+
+	@PostMapping("/rent")
+	public Contract rentHouse(@Valid @RequestBody RentDTO rentDTO) throws ResourceNotFoundException, ErrorDetails {
+		return service.rentHouse(rentDTO);
 	}
 
 }
