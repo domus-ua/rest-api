@@ -59,4 +59,9 @@ public class LocadorController {
 		return service.getLocadorHouses(locadorId);
 	}
 
+	@GetMapping("/check-quality/{id}")
+	public String checkQualityParameter(@PathVariable(value = "id") long locadorId) throws ResourceNotFoundException {
+		return service.checkQualityParameter(locadorId);
+	}
+
 }

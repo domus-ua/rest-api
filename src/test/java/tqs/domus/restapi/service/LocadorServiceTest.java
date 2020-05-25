@@ -9,6 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.House;
+import tqs.domus.restapi.model.HouseDTO;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
@@ -16,9 +18,12 @@ import tqs.domus.restapi.repository.LocadorRepository;
 import tqs.domus.restapi.repository.UserRepository;
 
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasToString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -136,7 +141,6 @@ public class LocadorServiceTest {
 		ResponseEntity<Void> result = service.deleteLocadorById(0L);
 
 		assertThat(ResponseEntity.noContent().build(), hasToString(result.toString()));
-
 	}
 
 	@Test
@@ -144,11 +148,9 @@ public class LocadorServiceTest {
 		when(repository.findById(anyLong())).thenReturn(Optional.empty());
 		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 
-
 		assertThrows(ResourceNotFoundException.class, () -> {
 			service.updateLocadorById(0L, userDTO);
 		});
-
 	}
 
 	@Test
@@ -170,8 +172,6 @@ public class LocadorServiceTest {
 
 		Locador result = service.updateLocadorById(1L, updatedUserDTO);
 		assertThat(updatedLocador.toString(), hasToString(result.toString()));
-
-
 	}
 
 	@Test
@@ -193,8 +193,73 @@ public class LocadorServiceTest {
 
 		Locador result = service.updateLocadorById(1L, updatedUserDTO);
 		assertThat(updatedLocador.toString(), hasToString(result.toString()));
-
 	}
 
+	@Test
+	void testCheckQualityParameter_locadorDoesNotExist() {
+		assertThrows(ResourceNotFoundException.class, () -> {
+			service.checkQualityParameter(0L);
+		});
+	}
+
+	@Test
+	void testCheckQualityParameter_locadorExistsAndNoReviews() throws Exception {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		String result = service.checkQualityParameter(1L);
+
+		assertThat("Your request was denied!", equalTo(result));
+	}
+
+	@Test
+	void testCheckQualityParameter_locadorExistsAndReviewsEmpty() throws Exception {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		List<House> houses = new ArrayList<>() {{
+			add(new House());
+		}};
+		locador.setHouses(houses);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		String result = service.checkQualityParameter(1L);
+
+		assertThat("Your request was denied!", equalTo(result));
+	}
+
+	@Test
+	void testCheckQualityParameter_locadorExistsAndIsAllowedToBeVerified() throws Exception {
+		UserDTO userDTO = new UserDTO("v@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+
+		User user = new ModelMapper().map(userDTO, User.class);
+		Locador locador = new Locador();
+		locador.setUser(user);
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, null);
+		House house = new ModelMapper().map(houseDTO, House.class);
+		house.setAverageRating(4.3);
+
+		List<House> houses = new ArrayList<>() {{
+			add(house);
+		}};
+		locador.setHouses(houses);
+
+		when(repository.findById(anyLong())).thenReturn(Optional.of(locador));
+
+		String result = service.checkQualityParameter(1L);
+
+		assertThat("Your request was accepted! Your quality is now verified!", equalTo(result));
+	}
 
 }

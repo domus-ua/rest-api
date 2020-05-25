@@ -24,6 +24,9 @@ import java.util.List;
 
 @Service
 public class LocadorService {
+	private static final String LOCADOR_NOT_FOUND = "Locador not found for this id: ";
+	private static final int QUALITY_THRESHOLD = 4;
+
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
@@ -47,12 +50,12 @@ public class LocadorService {
 
 	public Locador getLocadorById(long id) throws ResourceNotFoundException {
 		return repository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Locador not found for this" + " " + "id: " + id));
+				.orElseThrow(() -> new ResourceNotFoundException(LOCADOR_NOT_FOUND + id));
 	}
 
 	public ResponseEntity<Void> deleteLocadorById(long id) throws ResourceNotFoundException {
 		Locador locador = repository.findById(id).orElseThrow(
-				() -> new ResourceNotFoundException("Locador not " + "found for this" + " " + "id: " + id));
+				() -> new ResourceNotFoundException(LOCADOR_NOT_FOUND + id));
 
 		userRepository.delete(locador.getUser());
 
@@ -62,7 +65,7 @@ public class LocadorService {
 
 	public Locador updateLocadorById(long id, UserDTO userDTO) throws ResourceNotFoundException {
 		Locador locador = repository.findById(id).orElseThrow(
-				() -> new ResourceNotFoundException("Locador not " + "found for this" + " " + "id: " + id));
+				() -> new ResourceNotFoundException(LOCADOR_NOT_FOUND + id));
 
 		if (userDTO.getEmail() != null) {
 			locador.getUser().setEmail(userDTO.getEmail());
@@ -98,8 +101,35 @@ public class LocadorService {
 
 	public List<House> getLocadorHouses(long locadorId) throws ResourceNotFoundException {
 		Locador locador = repository.findById(locadorId).orElseThrow(
-				() -> new ResourceNotFoundException("Locador not found for this id: " + locadorId));
+				() -> new ResourceNotFoundException(LOCADOR_NOT_FOUND + locadorId));
 
 		return locador.getHouses();
+	}
+
+	public String checkQualityParameter(long locadorId) throws ResourceNotFoundException {
+		Locador locador = repository.findById(locadorId).orElseThrow(
+				() -> new ResourceNotFoundException(LOCADOR_NOT_FOUND + locadorId));
+
+		List<House> locadorHouses = locador.getHouses();
+		double avgRating = calculateAvgRating(locadorHouses);
+
+		boolean isVerified = avgRating >= QUALITY_THRESHOLD;
+
+		locador.setVerified(isVerified);
+		repository.save(locador);
+
+		if (isVerified) {
+			return "Your request was accepted! Your quality is now verified!";
+		} else {
+			return "Your request was denied!";
+		}
+	}
+
+	private double calculateAvgRating(List<House> houses) {
+		if (houses == null || houses.isEmpty()) {
+			return 0D;
+		}
+		double totalRating = houses.stream().mapToDouble(House::getAverageRating).sum();
+		return totalRating / houses.size();
 	}
 }

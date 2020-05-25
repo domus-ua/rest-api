@@ -52,9 +52,9 @@ public class HouseController {
 
 	@GetMapping("")
 	public List<House> searchHouse(@RequestParam(required = false) String city,
-			@RequestParam(required = false) Integer nRooms, @RequestParam(required = false) Double minPrice,
-			@RequestParam(required = false) Double maxPrice, @RequestParam(required = false) String orderAttribute,
-			@RequestParam(required = false) Boolean desc) throws ErrorDetails {
+								   @RequestParam(required = false) Integer nRooms, @RequestParam(required = false) Double minPrice,
+								   @RequestParam(required = false) Double maxPrice, @RequestParam(required = false) String orderAttribute,
+								   @RequestParam(required = false) Boolean desc) throws ErrorDetails {
 
 		String orderAtt = "rating";
 
@@ -93,7 +93,7 @@ public class HouseController {
 
 	@GetMapping("/reviews/{houseId}/{locatarioId}")
 	public HouseReview getHouseReview(@PathVariable(value = "houseId") long houseId,
-			@PathVariable(value = "locatarioId") long locatarioId) throws ResourceNotFoundException {
+									  @PathVariable(value = "locatarioId") long locatarioId) throws ResourceNotFoundException {
 		return service.getHouseReview(houseId, locatarioId);
 	}
 
@@ -105,7 +105,7 @@ public class HouseController {
 
 	@DeleteMapping("/reviews/{houseId}/{locatarioId}")
 	public ResponseEntity<Void> deleteHouseReview(@PathVariable(value = "houseId") long houseId,
-			@PathVariable(value = "locatarioId") long locatarioId) throws ResourceNotFoundException {
+												  @PathVariable(value = "locatarioId") long locatarioId) throws ResourceNotFoundException {
 		return service.deleteHouseReview(houseId, locatarioId);
 	}
 

@@ -250,7 +250,7 @@ public class LocadorControllerTest {
 	void testGetLocadorHouses_locadorExists() throws Exception {
 		given(service.getLocadorHouses(anyLong())).willReturn(new ArrayList<>());
 
-		servlet.perform(get("/locadores/houses/0")
+		servlet.perform(get("/locadores/houses/1")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
@@ -258,5 +258,27 @@ public class LocadorControllerTest {
 		reset(service);
 	}
 
+	@Test
+	void testCheckQualityParameter_locadorDoesNotExist() throws Exception {
+		given(service.checkQualityParameter(anyLong())).willThrow(new ResourceNotFoundException("Error"));
 
+		servlet.perform(get("/locadores/check-quality/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testCheckQualityParameter_locadorExists() throws Exception {
+		given(service.checkQualityParameter(anyLong())).willReturn("Passed!");
+
+		servlet.perform(get("/locadores/check-quality/1")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+	}
 }
