@@ -50,8 +50,4 @@ public class Locador {
 	@NotNull
 	@Setter(AccessLevel.NONE)
 	private String role = "locador";
-
-	@OneToMany(mappedBy = "locador")
-	@JsonIgnore
-	private List<LocatarioReview> reviews;
 }

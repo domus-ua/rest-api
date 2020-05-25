@@ -10,11 +10,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.RestApiApplication;
+import tqs.domus.restapi.model.House;
+import tqs.domus.restapi.model.HouseDTO;
 import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.LocadorDTO;
+import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.repository.UserRepository;
+import tqs.domus.restapi.service.HouseService;
 import tqs.domus.restapi.service.LocadorService;
+import tqs.domus.restapi.service.LocatarioService;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -46,6 +52,12 @@ public class LocadorControllerIT {
 
 	@Autowired
 	private LocadorService service;
+
+	@Autowired
+	private LocatarioService locatarioService;
+
+	@Autowired
+	private HouseService houseService;
 
 	@AfterEach
 	public void resetDb() {
@@ -225,5 +237,141 @@ public class LocadorControllerIT {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testRentHouse_locadorDoesNotExist() throws Exception {
+		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testRentHouse_houseDoesNotExist() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		String jsonString = "{\"locatarioId\": 0, \"locadorId\": " + locador.getId() + ", \"houseId\": 0, " +
+				"\"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", \"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testRentHouse_locatarioDoesNotExist() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+		House house = houseService.registerHouse(houseDTO);
+		String jsonString = "{\"locatarioId\": 0, \"locadorId\": " + locador.getId() + ", \"houseId\": " +
+				house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", \"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testRentHouse_AllEntitiesExist() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+		House house = houseService.registerHouse(houseDTO);
+
+		UserDTO userDTO2 = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		Locatario locatario = locatarioService.registerLocatario(userDTO2);
+
+		String jsonString = "{\"locatarioId\": " + locatario.getId() + ", \"locadorId\": " + locador.getId() + ", \"houseId" +
+				"\": " + house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", \"price\": " +
+				"550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testRentHouse_DateIsWrong() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+		House house = houseService.registerHouse(houseDTO);
+
+		UserDTO userDTO2 = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		Locatario locatario = locatarioService.registerLocatario(userDTO2);
+
+		String jsonString = "{\"locatarioId\": " + locatario.getId() + ", \"locadorId\": " + locador.getId() + ", \"houseId" +
+				"\": " + house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-04-26\", \"price\": " +
+				"550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void testRentHouse_HouseisNotAssociatedWithLocador() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		UserDTO userDTO2 = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		Locador locador2 = service.registerLocador(userDTO2);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+		House house = houseService.registerHouse(houseDTO);
+
+		UserDTO userDTO3 = new UserDTO("v2@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		Locatario locatario = locatarioService.registerLocatario(userDTO3);
+
+		String jsonString = "{\"locatarioId\": " + locatario.getId() + ", \"locadorId\": " + locador2.getId() + ", " +
+				"\"houseId\": " + house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", " +
+				"\"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void testRentHouse_HouseisNotAvailable() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, false
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+		House house = houseService.registerHouse(houseDTO);
+
+		UserDTO userDTO3 = new UserDTO("v2@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		Locatario locatario = locatarioService.registerLocatario(userDTO3);
+
+		String jsonString = "{\"locatarioId\": " + locatario.getId() + ", \"locadorId\": " + locador.getId() + ", " +
+				"\"houseId\": " + house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", " +
+				"\"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
 	}
 }

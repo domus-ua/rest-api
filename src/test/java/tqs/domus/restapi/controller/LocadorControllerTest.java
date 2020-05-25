@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
+import tqs.domus.restapi.model.Contract;
 import tqs.domus.restapi.model.Locador;
+import tqs.domus.restapi.model.RentDTO;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.service.LocadorService;
@@ -278,6 +280,54 @@ public class LocadorControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
+
+		reset(service);
+	}
+
+	@Test
+	void testRentHouse_someEntityDoesNotExist() throws Exception {
+		given(service.rentHouse(any(RentDTO.class))).willThrow(new ResourceNotFoundException("Error"));
+
+		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+
+		reset(service);
+	}
+
+	@Test
+	void testRentHouse_AllEntitiesExist() throws Exception {
+		given(service.rentHouse(any(RentDTO.class))).willReturn(new Contract());
+
+		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		reset(service);
+	}
+
+	@Test
+	void testRentHouse_ErrorInParameters() throws Exception {
+		given(service.rentHouse(any(RentDTO.class))).willThrow(new ErrorDetails("Error"));
+
+		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
 
 		reset(service);
 	}
