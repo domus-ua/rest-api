@@ -14,7 +14,7 @@ cache:
 sonarqube-check:
   stage: analysis
   script:
-    - mvn -B -q integration-test sonar:sonar
+    - mvn -B -q verify sonar:sonar
       -Dsonar.qualitygate.wait=true
   only:
     - master

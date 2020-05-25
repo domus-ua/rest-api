@@ -60,7 +60,7 @@ public class House {
 	private double habitableArea;
 
 	@NotNull
-	private boolean available = true;
+	private boolean available;
 
 	@NotNull
 	private double price;
