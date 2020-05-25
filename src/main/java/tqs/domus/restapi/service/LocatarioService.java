@@ -11,6 +11,7 @@ import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 import tqs.domus.restapi.model.UserDTO;
 import tqs.domus.restapi.model.WishListDTO;
+import tqs.domus.restapi.repository.ContractRepository;
 import tqs.domus.restapi.repository.HouseRepository;
 import tqs.domus.restapi.repository.LocatarioRepository;
 import tqs.domus.restapi.repository.UserRepository;
@@ -27,6 +28,7 @@ import java.util.Set;
 @Service
 public class LocatarioService {
 	private static final String LOCATARIO_NOT_FOUND = "Locatário not found for this id: ";
+	private static final String HOUSE_NOT_FOUND = "House not found for this id: ";
 
 	@Autowired
 	private UserRepository userRepository;
@@ -36,6 +38,9 @@ public class LocatarioService {
 
 	@Autowired
 	private HouseRepository houseRepository;
+
+	@Autowired
+	private ContractRepository contractRepository;
 
 	public Locatario registerLocatario(UserDTO userDTO) throws ErrorDetails {
 		if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -110,7 +115,7 @@ public class LocatarioService {
 
 		Long houseId = wishListDTO.getHouseId();
 		House house = houseRepository.findById(houseId)
-				.orElseThrow(() -> new ResourceNotFoundException("House not found for this id: " + houseId));
+				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + houseId));
 
 		Set<House> wishlist = locatario.getWishlist();
 		wishlist.add(house);
@@ -134,7 +139,7 @@ public class LocatarioService {
 
 		Long houseId = wishListDTO.getHouseId();
 		House house = houseRepository.findById(houseId)
-				.orElseThrow(() -> new ResourceNotFoundException("House not found for this id: " + locatarioId));
+				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + locatarioId));
 
 		Set<House> wishlist = locatario.getWishlist();
 		wishlist.remove(house);
@@ -142,5 +147,15 @@ public class LocatarioService {
 		repository.save(locatario);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	public boolean checkLocatarioAlreadyRentedHouse(long locatarioId, long houseId) throws ResourceNotFoundException {
+		Locatario locatario = repository.findById(locatarioId)
+				.orElseThrow(() -> new ResourceNotFoundException(LOCATARIO_NOT_FOUND + locatarioId));
+
+		House house = houseRepository.findById(houseId)
+				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + houseId));
+
+		return contractRepository.existsByLocatarioAndHouse(locatario, house);
 	}
 }

@@ -291,4 +291,34 @@ public class LocatarioControllerIT {
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
+
+	@Test
+	void testCheckLocatarioAlreadyRentedHouse_locatarioDoesNotExist() throws Exception {
+		servlet.perform(get("/locatarios/rented/0/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testCheckLocatarioAlreadyRentedHouse_houseDoesNotExist() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+
+		servlet.perform(get("/locatarios/rented/" + locatario.getId() + "/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testCheckLocatarioAlreadyRentedHouse_locatarioAndHouseExist() throws Exception {
+		Locatario locatario = service.registerLocatario(userDTO);
+		House house = houseService.registerHouse(houseDTO);
+
+		servlet.perform(get("/locatarios/rented/" + locatario.getId() + "/" + house.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", is(false)));
+	}
 }
