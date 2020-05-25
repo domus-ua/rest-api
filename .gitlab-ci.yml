@@ -14,9 +14,8 @@ cache:
 sonarqube-check:
   stage: analysis
   script:
-    - mvn -B -q verify sonar:sonar
+    - mvn -B -q integration-test sonar:sonar
       -Dsonar.qualitygate.wait=true
-      '-Dtest=!%regex[.*UI.*]'
   only:
     - master
 
