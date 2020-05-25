@@ -208,4 +208,22 @@ public class LocadorControllerIT {
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
+
+	@Test
+	void testCheckQualityParameter_locadorDoesNotExist() throws Exception {
+		servlet.perform(get("/locadores/check-quality/0")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void testCheckQualityParameter_locadorExists() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+
+		servlet.perform(get("/locadores/check-quality/" + locador.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
 }
