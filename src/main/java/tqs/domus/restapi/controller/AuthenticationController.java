@@ -27,7 +27,7 @@ public class AuthenticationController {
 
 	@PostMapping("/login")
 	public Object login(@RequestHeader("Authorization") String auth) throws ErrorDetails, ResourceNotFoundException {
-		String base64Credentials = auth.substring("Basic" .length()).trim();
+		String base64Credentials = auth.substring("Basic".length()).trim();
 		String[] credentials = new String(Base64.getDecoder().decode(base64Credentials)).split(":", 2);
 		String email = credentials[0];
 		String password = credentials[1];
