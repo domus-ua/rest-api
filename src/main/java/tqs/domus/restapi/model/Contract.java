@@ -52,4 +52,6 @@ public class Contract {
 	@NotNull
 	private Timestamp endDate;
 
+	@NotNull
+	private double price;
 }

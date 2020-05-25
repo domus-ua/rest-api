@@ -52,10 +52,6 @@ public class Locatario {
 
 	@OneToMany(mappedBy = "locatario")
 	@JsonIgnore
-	private List<LocatarioReview> reviewsReceived;
-
-	@OneToMany(mappedBy = "locatario")
-	@JsonIgnore
 	private List<HouseReview> reviews;
 
 	@NotNull
