@@ -116,6 +116,18 @@ public class AdminService {
 					"T3 c/ Garagem", "Mobília um pouco antiga, mas bem conservada, com acesso a garagem privada", "Internet;Garagem;TV;Máquina de Lavar Loiça", housePhotos, locadorDTO1);
 			House house2 = houseService.registerHouse(houseDTO2);
 
+			/*
+			 * ADD HOUSES TO WISHLIST
+			 */
+
+			/*
+			 * CREATE RENTS
+			 */
+
+			/*
+			 * CREATE REVIEWS
+			 */
+
 			return true;
 		} catch (Exception ex) {
 			return false;
