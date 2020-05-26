@@ -72,4 +72,11 @@ public class LocatarioController {
 		return service.deleteFromWishlist(wishListDTO);
 	}
 
+	@GetMapping("/rented/{locatarioId}/{houseId}")
+	public boolean checkLocatarioAlreadyRentedHouse(@PathVariable(value = "locatarioId") long locatarioId,
+													@PathVariable(value = "houseId") long houseId)
+			throws ResourceNotFoundException {
+		return service.checkLocatarioAlreadyRentedHouse(locatarioId, houseId);
+	}
+
 }
