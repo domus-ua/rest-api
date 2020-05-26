@@ -149,7 +149,6 @@
                         <exclude>**/model/*.class</exclude>
                         <exclude>**/controller/AdminController.class</exclude>
                         <exclude>**/service/AdminService.class</exclude>
-                        <exclude>**/Constants.class</exclude>
                     </excludes>
                 </configuration>
 

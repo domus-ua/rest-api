@@ -57,5 +57,4 @@ public class Locatario {
 	@NotNull
 	@Setter(AccessLevel.NONE)
 	private String role = "locatario";
-
 }

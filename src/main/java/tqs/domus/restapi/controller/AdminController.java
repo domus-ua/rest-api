@@ -17,13 +17,13 @@ public class AdminController {
 	@Autowired
 	private AdminService service;
 
-	@GetMapping("/reload-db")
-	public String logout() {
-		boolean retVal = service.reloadDatabse();
+	@GetMapping("/reset-db")
+	public String resetDatabase() {
+		boolean retVal = service.clearDatabase();
 		if (retVal) {
-			return "Reload db completed successfully!";
+			return "DB wiped successfully!";
 		} else {
-			return "Something wrong happened while reloading db!";
+			return "Something wrong happened while wiping db!";
 		}
 	}
 }

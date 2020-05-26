@@ -100,5 +100,4 @@ public class House {
 
 	@NotNull
 	private double averageRating = 0.0;
-
 }
