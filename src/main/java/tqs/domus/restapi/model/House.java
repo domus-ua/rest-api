@@ -91,7 +91,7 @@ public class House {
 	@JsonIgnore
 	private Set<Locatario> saves;
 
-	@OneToMany(mappedBy = "house")
+	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<HouseReview> reviewsReceived;
 
 	@OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
