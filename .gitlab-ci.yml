@@ -1,4 +1,5 @@
 image: maven:3.6.3-jdk-11
+.
 
 stages:
   - analysis
@@ -14,8 +15,7 @@ cache:
 sonarqube-check:
   stage: analysis
   script:
-    - mvn -B -q verify sonar:sonar
-      -Dsonar.qualitygate.wait=true
+    - mvn -B -q verify sonar:sonar -Dsonar.qualitygate.wait=true
   only:
     - master
 
@@ -35,7 +35,7 @@ unit-test:
 integration-test:
   stage: test
   script:
-    - mvn -B integration-test '-Dtest=!%regex[.*UI.*]'
+    - mvn -B integration-test
   artifacts:
     reports:
       junit:
