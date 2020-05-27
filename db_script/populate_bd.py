@@ -63,7 +63,7 @@ def main(base_url):
     house_3_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
     house_photos = [HOUSE_4_PHOTO_1, HOUSE_4_PHOTO_2]
-    data = {"street": "Rua Formosa", "city": "Viseu, Portugal", "postalCode": "3500-135", "noRooms": 1, "noBathrooms": 1, "noGarages": 0, "habitableArea": 65, "available": True, "price": 195, "name": "T1 para rapariga",
+    data = {"street": "Rua Formosa", "city": "Viseu, Portugal", "postalCode": "3500-135", "noRooms": 1, "noBathrooms": 1, "noGarages": 0, "habitableArea": 65, "available": True, "price": 180, "name": "T1 para rapariga",
             "description": "Apenas são permitidas raparigas", "propertyFeatures": "WI-FI;Washing Machine;Vacuum Cleaner", "photos": house_photos, "locador": {"id": locador_4_id}}
     house_4_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
@@ -85,6 +85,17 @@ def main(base_url):
     #######################################
     #            CREATE RENTS             #
     #######################################
+    data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_4_id,
+            "locadorId": locador_4_id, "startDate": "2020-04-01", "endDate": "2020-06-01", "price": 175}
+    print(post(url=f"{base_url}/locadores/rent", json=data))
+
+    data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_3_id,
+            "locadorId": locador_3_id, "startDate": "2019-01-01", "endDate": "2020-01-01", "price": 195}
+    print(post(url=f"{base_url}/locadores/rent", json=data))
+
+    data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_1_id,
+            "locadorId": locador_1_id, "startDate": "2018-06-01", "endDate": "2018-12-01", "price": 250}
+    print(post(url=f"{base_url}/locadores/rent", json=data))
 
     #######################################
     #           CREATE REVIEWS            #
