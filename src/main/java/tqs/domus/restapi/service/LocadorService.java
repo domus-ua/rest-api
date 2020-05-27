@@ -9,7 +9,6 @@ import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Contract;
 import tqs.domus.restapi.model.ContractKey;
 import tqs.domus.restapi.model.House;
-import tqs.domus.restapi.model.HouseReviewKey;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.RentDTO;
