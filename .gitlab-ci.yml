@@ -45,6 +45,19 @@ integration-test:
     - merge_requests
     - master
 
+.jmeter-test:
+  stage: test
+  image: 
+    name: justb4/jmeter:latest
+    entrypoint: [""]
+  script:
+    - mkdir testresults
+    - /entrypoint.sh -n -t ./rest_api_tests.jmx -l ./testresults.log -e -o ./testresults
+  artifacts:
+    paths:
+      - testresults
+
+
 package:
   stage: package
   script:
