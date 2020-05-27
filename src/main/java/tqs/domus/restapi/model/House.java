@@ -94,9 +94,9 @@ public class House {
 	@OneToMany(mappedBy = "house")
 	private List<HouseReview> reviewsReceived;
 
-	@OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private Contract contract;
+	private List<Contract> contracts;
 
 	@NotNull
 	private double averageRating = 0.0;
