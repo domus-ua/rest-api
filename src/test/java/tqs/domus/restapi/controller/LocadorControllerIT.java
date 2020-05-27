@@ -365,7 +365,7 @@ public class LocadorControllerIT {
 		UserDTO userDTO3 = new UserDTO("v2@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 		Locatario locatario = locatarioService.registerLocatario(userDTO3);
 
-		String jsonString = "{\"locatarioId\": " + locatario.getId() + ", \"locadorId\": " + locador.getId() + ", " +
+		String jsonString = "{\"locatarioEmail\": \"v2@ua.pt\", \"locadorId\": " + locador.getId() + ", " +
 				"\"houseId\": " + house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", " +
 				"\"price\": 550.0}";
 

@@ -172,7 +172,7 @@ public class LocadorService {
 			throw new ErrorDetails("Contract already exists");
 		}
 
-		ContractKey key = new ContractKey(locatarioId, houseId);
+		ContractKey key = new ContractKey(locatario.getId(), houseId);
 
 		Contract contract = new Contract();
 		contract.setId(key);
