@@ -39,9 +39,9 @@ public class Locatario {
 	@NotNull
 	private User user;
 
-	@OneToOne(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private Contract contract;
+	private List<Contract> contracts;
 
 	@ManyToMany
 	@JoinTable(name = "wishlist",

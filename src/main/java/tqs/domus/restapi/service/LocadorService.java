@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Contract;
+import tqs.domus.restapi.model.ContractKey;
 import tqs.domus.restapi.model.House;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.Locatario;
@@ -150,9 +151,9 @@ public class LocadorService {
 		House house = houseRepository.findById(houseId).orElseThrow(
 				() -> new ResourceNotFoundException("House not found for this id: " + houseId));
 
-		long locatarioId = rentDTO.getLocatarioId();
-		Locatario locatario = locatarioRepository.findById(locatarioId).orElseThrow(
-				() -> new ResourceNotFoundException("Locatario not found for this id: " + locatarioId));
+		String locatarioEmail = rentDTO.getLocatarioEmail();
+		Locatario locatario = locatarioRepository.findByUserEmail(locatarioEmail).orElseThrow(
+				() -> new ResourceNotFoundException("Locatario not found for this email: " + locatarioEmail));
 
 		if (!locador.getHouses().contains(house)) {
 			throw new ErrorDetails("House not associated with specified locador");
@@ -166,10 +167,19 @@ public class LocadorService {
 			throw new ErrorDetails("Specified house is not currently available");
 		}
 
-		Contract contract = new ModelMapper().map(rentDTO, Contract.class);
-		contract.setLocador(locador);
+		if (contractRepository.existsByLocatarioAndHouse(locatario, house)) {
+			throw new ErrorDetails("Contract already exists");
+		}
+
+		ContractKey key = new ContractKey(locatario.getId(), houseId);
+
+		Contract contract = new Contract();
+		contract.setId(key);
 		contract.setLocatario(locatario);
 		contract.setHouse(house);
+		contract.setStartDate(rentDTO.getStartDate());
+		contract.setEndDate(rentDTO.getEndDate());
+		contract.setPrice(rentDTO.getPrice());
 
 		return contractRepository.save(contract);
 	}

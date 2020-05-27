@@ -17,7 +17,6 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import java.util.List;
@@ -94,9 +93,9 @@ public class House {
 	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<HouseReview> reviewsReceived;
 
-	@OneToOne(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
-	private Contract contract;
+	private List<Contract> contracts;
 
 	@NotNull
 	private double averageRating = 0.0;

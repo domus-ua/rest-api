@@ -40,10 +40,6 @@ public class Locador {
 	@JsonIgnore
 	private List<House> houses;
 
-	@OneToMany(mappedBy = "locador", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	private List<Contract> contracts;
-
 	@NotNull
 	private boolean isVerified = false;
 
