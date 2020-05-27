@@ -25,7 +25,6 @@ def main(base_url):
             "password": "locatario3", "phoneNumber": "969230471", "sex": "F", "photo": LOCATARIO_3_PHOTO}
     locatario_3_id = post(url=f"{base_url}/locatarios", json=data).json()["id"]
 
-
     #######################################
     #          CREATE LOCADORES           #
     #######################################
@@ -45,20 +44,28 @@ def main(base_url):
             "password": "locador4", "phoneNumber": "966092333", "sex": "F", "photo": LOCADOR_4_PHOTO}
     locador_4_id = post(url=f"{base_url}/locadores", json=data).json()["id"]
 
-
     #######################################
     #            CREATE HOUSES            #
     #######################################
     house_photos = [HOUSE_1_PHOTO_1]
     data = {"street": "Rua de Norton Matos nº123", "city": "Aveiro, Portugal", "postalCode": "3810-064", "noRooms": 2, "noBathrooms": 1, "noGarages": 0, "habitableArea": 70, "available": True, "price": 250,
-            "name": "T2 em ótimo estado", "description": "Totalmente remodelado em 2018, em tipologia de T2, com WI-FI.", "propertyFeatures": "Internet;Secador;Máquina de Lavar Loiça", "photos": house_photos, "locador": {"id": locador_1_id}}
+            "name": "T2 em ótimo estado", "description": "Totalmente remodelado em 2018, em tipologia de T2, com WI-FI.", "propertyFeatures": "WI-FI;Washing Machine", "photos": house_photos, "locador": {"id": locador_1_id}}
     house_1_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
     house_photos = [HOUSE_2_PHOTO_1, HOUSE_2_PHOTO_2]
     data = {"street": "Urbanização Chave 9-5", "city": "Aveiro, Portugal", "postalCode": "3810-081", "noRooms": 3, "noBathrooms": 2, "noGarages": 1, "habitableArea": 110, "available": True, "price": 375, "name": "T3 c/ Garagem",
-            "description": "Mobília um pouco antiga, mas bem conservada, com acesso a garagem privada", "propertyFeatures": "Internet;Garagem;TV;Máquina de Lavar Loiça", "photos": house_photos, "locador": {"id": locador_1_id}}
+            "description": "Mobília um pouco antiga, mas bem conservada, com acesso a garagem privada", "propertyFeatures": "WI-FI;Parking;Television;Washing Machine", "photos": house_photos, "locador": {"id": locador_1_id}}
     house_2_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
+    house_photos = [HOUSE_3_PHOTO_1, HOUSE_3_PHOTO_2, HOUSE_3_PHOTO_3]
+    data = {"street": "Urbanização Chave 9-5", "city": "Aveiro, Portugal", "postalCode": "3810-081", "noRooms": 1, "noBathrooms": 1, "noGarages": 0, "habitableArea": 65, "available": True, "price": 195, "name": "T1 bem localizado",
+            "description": "Mobília um pouco antiga, mas bem conservada. Muito bem localizado", "propertyFeatures": "WI-FI;Washing Machine", "photos": house_photos, "locador": {"id": locador_3_id}}
+    house_3_id = post(url=f"{base_url}/houses", json=data).json()["id"]
+
+    house_photos = [HOUSE_4_PHOTO_1, HOUSE_4_PHOTO_2]
+    data = {"street": "Rua Formosa", "city": "Viseu, Portugal", "postalCode": "3500-135", "noRooms": 1, "noBathrooms": 1, "noGarages": 0, "habitableArea": 65, "available": True, "price": 195, "name": "T1 para rapariga",
+            "description": "Apenas são permitidas raparigas", "propertyFeatures": "WI-FI;Washing Machine;Vacuum Cleaner", "photos": house_photos, "locador": {"id": locador_4_id}}
+    house_4_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
     #######################################
     #       ADD HOUSES TO WISHLIST        #
@@ -66,11 +73,18 @@ def main(base_url):
     data = {"locatarioId": locatario_2_id, "houseId": house_1_id}
     post(url=f"{base_url}/locatarios/wishlist", json=data)
 
+    data = {"locatarioId": locatario_3_id, "houseId": house_4_id}
+    post(url=f"{base_url}/locatarios/wishlist", json=data)
+
+    data = {"locatarioId": locatario_3_id, "houseId": house_2_id}
+    post(url=f"{base_url}/locatarios/wishlist", json=data)
+
+    data = {"locatarioId": locatario_3_id, "houseId": house_3_id}
+    post(url=f"{base_url}/locatarios/wishlist", json=data)
 
     #######################################
     #            CREATE RENTS             #
     #######################################
-
 
     #######################################
     #           CREATE REVIEWS            #
