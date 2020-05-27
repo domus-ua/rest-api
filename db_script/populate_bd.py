@@ -90,7 +90,7 @@ def main(base_url):
     #           CREATE REVIEWS            #
     #######################################
     data = {"houseId": house_2_id, "locatarioId": locatario_2_id,
-            "comment": "My beautiful comment", "rating": 3.5}
+            "comment": "Very nice!", "rating": 3.5}
     post(url=f"{base_url}/houses/reviews", json=data)
 
 
