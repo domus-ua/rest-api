@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.User;
 
+import java.util.Optional;
+
 /**
  * @author Vasco Ramos
  * @date 16/mai/2020
@@ -16,4 +18,6 @@ public interface LocatarioRepository extends JpaRepository<Locatario, Long> {
 	Locatario findByUser(User user);
 
 	boolean existsByUser(User user);
+
+	Optional<Locatario> findByUserEmail(String email);
 }
