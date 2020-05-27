@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import tqs.domus.restapi.exception.ErrorDetails;
 import tqs.domus.restapi.exception.ResourceNotFoundException;
 import tqs.domus.restapi.model.Contract;
+import tqs.domus.restapi.model.ContractKey;
 import tqs.domus.restapi.model.House;
+import tqs.domus.restapi.model.HouseReviewKey;
 import tqs.domus.restapi.model.Locador;
 import tqs.domus.restapi.model.Locatario;
 import tqs.domus.restapi.model.RentDTO;
@@ -166,10 +168,19 @@ public class LocadorService {
 			throw new ErrorDetails("Specified house is not currently available");
 		}
 
-		Contract contract = new ModelMapper().map(rentDTO, Contract.class);
-		contract.setLocador(locador);
+		if (contractRepository.existsByLocatarioAndHouse(locatario, house)) {
+			throw new ErrorDetails("Contract already exists");
+		}
+
+		ContractKey key = new ContractKey(locatarioId, houseId);
+
+		Contract contract = new Contract();
+		contract.setId(key);
 		contract.setLocatario(locatario);
 		contract.setHouse(house);
+		contract.setStartDate(rentDTO.getStartDate());
+		contract.setEndDate(rentDTO.getEndDate());
+		contract.setPrice(rentDTO.getPrice());
 
 		return contractRepository.save(contract);
 	}

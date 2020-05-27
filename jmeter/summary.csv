@@ -1,0 +1,8 @@
+Label,# Samples,Average,Min,Max,Std. Dev.,Error %,Throughput,Received KB/sec,Sent KB/sec,Avg. Bytes
+Request Get Locatario,10,303,98,601,179.68,0.000%,2.02143,1.01,0.27,514.0
+Request Get Locador,10,874,55,7253,2128.13,0.000%,.83015,0.43,0.11,525.0
+Request Get Cities,10,1302,52,5679,2086.16,0.000%,.58248,0.16,0.07,288.0
+Request Get Locatario Wishlist,10,1571,60,12105,3539.02,0.000%,.53308,0.14,0.08,263.0
+Request Get All Houses,10,36041,16393,49427,10098.78,0.000%,.18822,358.02,0.02,1947812.0
+Request Get House Reviews,10,575,96,1582,430.43,0.000%,.27150,0.07,0.04,263.0
+TOTAL,60,6778,52,49427,13858.21,0.000%,1.08948,345.72,0.15,324944.2

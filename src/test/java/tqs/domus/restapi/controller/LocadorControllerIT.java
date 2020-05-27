@@ -282,7 +282,7 @@ public class LocadorControllerIT {
 	}
 
 	@Test
-	void testRentHouse_AllEntitiesExist() throws Exception {
+	void testRentHouse_allEntitiesExist() throws Exception {
 		Locador locador = service.registerLocador(userDTO);
 		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
 
@@ -305,7 +305,7 @@ public class LocadorControllerIT {
 	}
 
 	@Test
-	void testRentHouse_DateIsWrong() throws Exception {
+	void testRentHouse_dateIsWrong() throws Exception {
 		Locador locador = service.registerLocador(userDTO);
 		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
 
@@ -328,7 +328,7 @@ public class LocadorControllerIT {
 	}
 
 	@Test
-	void testRentHouse_HouseisNotAssociatedWithLocador() throws Exception {
+	void testRentHouse_houseIsNotAssociatedWithLocador() throws Exception {
 		Locador locador = service.registerLocador(userDTO);
 		UserDTO userDTO2 = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
 		Locador locador2 = service.registerLocador(userDTO2);
@@ -353,7 +353,37 @@ public class LocadorControllerIT {
 	}
 
 	@Test
-	void testRentHouse_HouseisNotAvailable() throws Exception {
+	void testRentHouse_rentAlreadyExists() throws Exception {
+		Locador locador = service.registerLocador(userDTO);
+		UserDTO userDTO2 = new UserDTO("v1@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
+
+		HouseDTO houseDTO = new HouseDTO("Av. da Misericórdia", "São João da Madeira", "3700-191", 2, 2, 2, 300, true
+				, 230, "Casa T2", "Casa muito bonita", "WI-FI;Máquina de lavar", null, locadorDTO);
+		House house = houseService.registerHouse(houseDTO);
+
+		UserDTO userDTO3 = new UserDTO("v2@ua.pt", "Vasco", "Ramos", "pwd", "123", "M", null);
+		Locatario locatario = locatarioService.registerLocatario(userDTO3);
+
+		String jsonString = "{\"locatarioId\": " + locatario.getId() + ", \"locadorId\": " + locador.getId() + ", " +
+				"\"houseId\": " + house.getId() + ", \"startDate\": \"2020-05-25\", \"endDate\": \"2020-05-26\", " +
+				"\"price\": 550.0}";
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+
+		servlet.perform(post("/locadores/rent")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void testRentHouse_houseIsNotAvailable() throws Exception {
 		Locador locador = service.registerLocador(userDTO);
 		LocadorDTO locadorDTO = new LocadorDTO(locador.getId());
 
