@@ -25,6 +25,7 @@ def main(base_url):
             "password": "locatario3", "phoneNumber": "969230471", "sex": "F", "photo": LOCATARIO_3_PHOTO}
     locatario_3_id = post(url=f"{base_url}/locatarios", json=data).json()["id"]
 
+
     #######################################
     #          CREATE LOCADORES           #
     #######################################
@@ -44,6 +45,7 @@ def main(base_url):
             "password": "locador4", "phoneNumber": "966092333", "sex": "F", "photo": LOCADOR_4_PHOTO}
     locador_4_id = post(url=f"{base_url}/locadores", json=data).json()["id"]
 
+
     #######################################
     #            CREATE HOUSES            #
     #######################################
@@ -57,15 +59,18 @@ def main(base_url):
             "description": "Mobília um pouco antiga, mas bem conservada, com acesso a garagem privada", "propertyFeatures": "Internet;Garagem;TV;Máquina de Lavar Loiça", "photos": house_photos, "locador": {"id": locador_1_id}}
     house_2_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
+
     #######################################
     #       ADD HOUSES TO WISHLIST        #
     #######################################
     data = {"locatarioId": locatario_2_id, "houseId": house_1_id}
     post(url=f"{base_url}/locatarios/wishlist", json=data)
 
+
     #######################################
     #            CREATE RENTS             #
     #######################################
+
 
     #######################################
     #           CREATE REVIEWS            #
@@ -79,7 +84,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Reset and reload DOMUS database")
 
-    parser.add_argument("-d", "--dev", dest="dev", action="store_true", help="use local REST API to assist development (default=False)")
+    parser.add_argument("-d", "--dev", dest="dev", action="store_true",
+                        help="use local REST API to assist development (default=False)")
 
     args = parser.parse_args()
 
