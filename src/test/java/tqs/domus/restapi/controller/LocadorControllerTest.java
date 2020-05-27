@@ -288,7 +288,7 @@ public class LocadorControllerTest {
 	void testRentHouse_someEntityDoesNotExist() throws Exception {
 		given(service.rentHouse(any(RentDTO.class))).willThrow(new ResourceNotFoundException("Error"));
 
-		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+		String jsonString = "{\"locatarioEmail\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
 				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
 
 		servlet.perform(post("/locadores/rent")
@@ -304,7 +304,7 @@ public class LocadorControllerTest {
 	void testRentHouse_AllEntitiesExist() throws Exception {
 		given(service.rentHouse(any(RentDTO.class))).willReturn(new Contract());
 
-		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+		String jsonString = "{\"locatarioEmail\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
 				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
 
 		servlet.perform(post("/locadores/rent")
@@ -320,7 +320,7 @@ public class LocadorControllerTest {
 	void testRentHouse_ErrorInParameters() throws Exception {
 		given(service.rentHouse(any(RentDTO.class))).willThrow(new ErrorDetails("Error"));
 
-		String jsonString = "{\"locatarioId\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
+		String jsonString = "{\"locatarioEmail\": 0, \"locadorId\": 0, \"houseId\": 0, \"startDate\": \"2020-05-25\", " +
 				"\"endDate\": \"2020-05-26\", \"price\": 550.0}";
 
 		servlet.perform(post("/locadores/rent")

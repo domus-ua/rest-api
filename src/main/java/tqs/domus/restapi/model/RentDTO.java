@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class RentDTO {
 	private Long houseId;
-	private Long locatarioId;
+	private String locatarioEmail;
 	private Long locadorId;
 	private Timestamp startDate;
 	private Timestamp endDate;

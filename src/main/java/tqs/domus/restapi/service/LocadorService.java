@@ -150,9 +150,9 @@ public class LocadorService {
 		House house = houseRepository.findById(houseId).orElseThrow(
 				() -> new ResourceNotFoundException("House not found for this id: " + houseId));
 
-		long locatarioId = rentDTO.getLocatarioId();
-		Locatario locatario = locatarioRepository.findById(locatarioId).orElseThrow(
-				() -> new ResourceNotFoundException("Locatario not found for this id: " + locatarioId));
+		String locatarioEmail = rentDTO.getLocatarioEmail();
+		Locatario locatario = locatarioRepository.findByUserEmail(locatarioEmail).orElseThrow(
+				() -> new ResourceNotFoundException("Locatario not found for this email: " + locatarioEmail));
 
 		if (!locador.getHouses().contains(house)) {
 			throw new ErrorDetails("House not associated with specified locador");
