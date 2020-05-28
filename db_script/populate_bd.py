@@ -157,7 +157,13 @@ def main(base_url):
             "locadorId": locador_4_id, "startDate": "2020-01-01", "endDate": "2020-12-01", "price": 220}
     print(post(url=f"{base_url}/locadores/rent", json=data))
 
-    
+    data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_6_id,
+            "locadorId": locador_4_id, "startDate": "2020-02-01", "endDate": "2020-08-01", "price": 320}
+    print(post(url=f"{base_url}/locadores/rent", json=data))
+
+    data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_7_id,
+            "locadorId": locador_2_id, "startDate": "2015-06-01", "endDate": "2015-12-01", "price": 300}
+    print(post(url=f"{base_url}/locadores/rent", json=data))
 
     #######################################
     #           CREATE REVIEWS            #
@@ -188,6 +194,18 @@ def main(base_url):
 
     data = {"houseId": house_8_id, "locatarioId": locatario_3_id,
             "comment": "The bedroom was nice and the location of the house is very good!", "rating": 4.5}
+    post(url=f"{base_url}/houses/reviews", json=data)
+
+    data = {"houseId": house_5_id, "locatarioId": locatario_3_id,
+            "comment": "It was not the best experience, but it was enough for the price.", "rating": 3.0}
+    post(url=f"{base_url}/houses/reviews", json=data)
+
+    data = {"houseId": house_4_id, "locatarioId": locatario_2_id,
+            "comment": "The proprietary is a little weird...", "rating": 2.5}
+    post(url=f"{base_url}/houses/reviews", json=data)
+
+    data = {"houseId": house_1_id, "locatarioId": locatario_2_id,
+            "comment": "Great house! A lot better than what I was expecting!", "rating": 5.0}
     post(url=f"{base_url}/houses/reviews", json=data)
 
 
