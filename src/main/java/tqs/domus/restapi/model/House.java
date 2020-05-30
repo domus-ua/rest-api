@@ -90,7 +90,7 @@ public class House {
 	@JsonIgnore
 	private Set<Locatario> saves;
 
-	@OneToMany(mappedBy = "house")
+	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<HouseReview> reviewsReceived;
 
 	@OneToMany(mappedBy = "house", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -99,5 +99,4 @@ public class House {
 
 	@NotNull
 	private double averageRating = 0.0;
-
 }

@@ -50,12 +50,11 @@ public class Locatario {
 	@JsonIgnore
 	private Set<House> wishlist;
 
-	@OneToMany(mappedBy = "locatario")
+	@OneToMany(mappedBy = "locatario", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonIgnore
 	private List<HouseReview> reviews;
 
 	@NotNull
 	@Setter(AccessLevel.NONE)
 	private String role = "locatario";
-
 }
