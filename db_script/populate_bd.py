@@ -80,16 +80,28 @@ def main(base_url):
     house_6_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
     house_photos = [HOUSE_7_PHOTO_1, HOUSE_7_PHOTO_2]
-    data = {"street": "Rua Heliodoro Salgado", "city": "Lisboa", "postalCode": "1170-174", "noRooms": 3, "noBathrooms": 2, "noGarages": 0, "habitableArea": 120, "available": True, "price": 300, "name": "Quartos em T3 Lisboa",
+    data = {"street": "Rua Heliodoro Salgado", "city": "Lisboa", "postalCode": "1170-174", "noRooms": 3, "noBathrooms": 2, "noGarages": 0, "habitableArea": 120, "available": True, "price": 300, "name": "Quartos T3 em Lisboa",
             "description": "Despesas incluídas. A 10 minutos a pé do metro dos Anjos, encontrará este apartamento totalmente remodelado e que conta com um ambiente internacional bastante descontraído.",
             "propertyFeatures": "Wi-Fi;Vacuum cleaner;Fire extinguisher", "photos": house_photos, "locador": {"id": locador_2_id}}
     house_7_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
     house_photos = [HOUSE_8_PHOTO_1, HOUSE_8_PHOTO_2]
-    data = {"street": "Rua Heliodoro Salgado", "city": "Lisboa", "postalCode": "1170-174", "noRooms": 4, "noBathrooms": 2, "noGarages": 1, "habitableArea": 150, "available": True, "price": 320, "name": "Quartos em T4 Lisboa",
+    data = {"street": "Rua Heliodoro Salgado", "city": "Lisboa", "postalCode": "1170-174", "noRooms": 4, "noBathrooms": 2, "noGarages": 1, "habitableArea": 150, "available": True, "price": 320, "name": "Quartos T4 em Lisboa",
             "description": "Desejavelmente estudantes ou quadros superiores.Um mês de renda e um mês de caução.Não aceitamos animaisNão fumadoresPrivilegiamos contratos de média ou longa duração.",
             "propertyFeatures": "Wi-Fi;Vacuum cleaner;Washing machine;Balcony", "photos": house_photos, "locador": {"id": locador_2_id}}
     house_8_id = post(url=f"{base_url}/houses", json=data).json()["id"]
+
+    house_photos = [HOUSE_9_PHOTO_1, HOUSE_9_PHOTO_2, HOUSE_9_PHOTO_3]
+    data = {"street": "R. do Palacio do Gelo nº 3", "city": "Viseu", "postalCode": "3504-526", "noRooms": 1, "noBathrooms": 1, "noGarages": 0, "habitableArea": 50, "available": True, "price": 140, "name": "T1 Viseu",
+            "description": "Arrendo quarto individual mobilado a estudante em apartamento no centro da cidade, próximo da Universidade Católica, Escola Superior dentária, Escola Superior de Enfermagem. (3 minutos a pé) e da ESEV (7 minutos a pé). A 2 minutos do Rossio. Disponível a partir de maio.",
+            "propertyFeatures": "Wi-Fi;Vacuum cleaner;Washing machine;Balcony", "photos": house_photos, "locador": {"id": locador_4_id}}
+    post(url=f"{base_url}/houses", json=data).json()["id"]
+
+    house_photos = [HOUSE_10_PHOTO_1, HOUSE_10_PHOTO_2, HOUSE_10_PHOTO_3]
+    data = {"street": "Rua Antero Quental Coimbra", "city": "Coimbra", "postalCode": "3000-032", "noRooms": 4, "noBathrooms": 3, "noGarages": 1, "habitableArea": 130, "available": True, "price": 400, "name": "Quartos de luxo todas as despesas incluidas em Coimbra",
+            "description": "Habitação para estudantes com muita qualidade, conforto e confianca. Casa nova moderna, toda remodelada e equipada. Quarto com excelente qualidade e todos mobilados. Excelentes areas comuns 6 wcs, cozinha, sala de refeições, sala de estudo, sala TV, jardim e estacionamento. Todas despesas incluidas agua, luz, gas, internet wi-fi, TVcabo, limpeza zonas comuns, contrato e recibos. Entre celas e p. República. 2min. A pe da Universidade (polo 1 e polo 3) e hospital.",
+            "propertyFeatures": "Wi-Fi;Vacuum cleaner;Washing machine;Balcony;Warm water;Television", "photos": house_photos, "locador": {"id": locador_1_id}}
+    post(url=f"{base_url}/houses", json=data).json()["id"]
 
     #######################################
     #       ADD HOUSES TO WISHLIST        #
@@ -111,102 +123,102 @@ def main(base_url):
     #######################################
     data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_4_id,
             "locadorId": locador_4_id, "startDate": "2020-04-01", "endDate": "2020-06-01", "price": 175}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_3_id,
             "locadorId": locador_3_id, "startDate": "2019-01-01", "endDate": "2020-01-01", "price": 195}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_8_id,
             "locadorId": locador_2_id, "startDate": "2018-01-01", "endDate": "2018-12-01", "price": 320}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_7_id,
             "locadorId": locador_2_id, "startDate": "2017-01-01", "endDate": "2017-10-01", "price": 300}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_5_id,
             "locadorId": locador_3_id, "startDate": "2016-01-01", "endDate": "2016-12-01", "price": 280}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_1_id,
             "locadorId": locador_1_id, "startDate": "2018-06-01", "endDate": "2018-12-01", "price": 250}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_2_id,
             "locadorId": locador_1_id, "startDate": "2017-06-01", "endDate": "2017-12-01", "price": 375}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_7_id,
             "locadorId": locador_2_id, "startDate": "2019-06-01", "endDate": "2019-12-01", "price": 300}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_8_id,
             "locadorId": locador_2_id, "startDate": "2020-01-01", "endDate": "2020-12-01", "price": 320}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario1@mail.com", "houseId": house_2_id,
             "locadorId": locador_1_id, "startDate": "2018-08-01", "endDate": "2018-12-22", "price": 375}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario1@mail.com", "houseId": house_5_id,
             "locadorId": locador_3_id, "startDate": "2019-03-01", "endDate": "2019-12-01", "price": 280}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario1@mail.com", "houseId": house_6_id,
             "locadorId": locador_4_id, "startDate": "2020-01-01", "endDate": "2020-12-01", "price": 220}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario2@mail.com", "houseId": house_6_id,
             "locadorId": locador_4_id, "startDate": "2020-02-01", "endDate": "2020-08-01", "price": 320}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     data = {"locatarioEmail": "locatario3@mail.com", "houseId": house_6_id,
             "locadorId": locador_4_id, "startDate": "2015-06-01", "endDate": "2015-12-01", "price": 300}
-    print(post(url=f"{base_url}/locadores/rent", json=data))
+    post(url=f"{base_url}/locadores/rent", json=data)
 
     #######################################
     #           CREATE REVIEWS            #
     #######################################
     data = {"houseId": house_2_id, "locatarioId": locatario_2_id,
             "comment": "Very nice!", "rating": 3.5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_2_id, "locatarioId": locatario_1_id,
             "comment": "I had an amazing stay!", "rating": 4.5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_5_id, "locatarioId": locatario_1_id,
             "comment": "The house is nice, but the street is very noisy!", "rating": 3.5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_8_id, "locatarioId": locatario_2_id,
             "comment": "Excellent house with an amazing owner.", "rating": 5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_7_id, "locatarioId": locatario_2_id,
             "comment": "The bathroom was always dirty and the windows didn't close.", "rating": 2.5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_3_id, "locatarioId": locatario_3_id,
             "comment": "The house is nice, but some walls need to be repainted!", "rating": 4}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_8_id, "locatarioId": locatario_3_id,
             "comment": "The bedroom was nice and the location of the house is very good!", "rating": 4.5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_5_id, "locatarioId": locatario_3_id,
             "comment": "It was not the best experience, but it was enough for the price.", "rating": 3.0}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_4_id, "locatarioId": locatario_2_id,
             "comment": "The proprietary is a little weird...", "rating": 2.5}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
     data = {"houseId": house_1_id, "locatarioId": locatario_2_id,
             "comment": "Great house! A lot better than what I was expecting!", "rating": 5.0}
-    print(post(url=f"{base_url}/houses/reviews", json=data))
+    post(url=f"{base_url}/houses/reviews", json=data)
 
 
 if __name__ == "__main__":
@@ -214,7 +226,7 @@ if __name__ == "__main__":
         description="Reset and reload DOMUS database")
 
     parser.add_argument("-d", "--dev", dest="dev", action="store_true",
-                        help="use local REST API to assist development (default=False)")
+                                            help="use local REST API to assist development (default=False)")
 
     args = parser.parse_args()
 
