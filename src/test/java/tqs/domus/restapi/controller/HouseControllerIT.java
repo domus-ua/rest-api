@@ -111,7 +111,6 @@ public class HouseControllerIT {
 				.andExpect(status().isBadRequest());
 	}
 
-
 	@Test
 	void testCreateHouse_locadorDoesNotExist() throws Exception {
 		House house = new ModelMapper().map(houseDTO, House.class);
@@ -187,6 +186,14 @@ public class HouseControllerIT {
 		String houseJsonString = mapper.writeValueAsString(houseMapper);
 		servlet.perform(get("/houses")
 				.content(houseJsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	void testGetTrendindHouses_isOk() throws Exception {
+		servlet.perform(get("/houses/trending")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());

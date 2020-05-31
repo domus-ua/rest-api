@@ -72,6 +72,10 @@ public class HouseService {
 		}
 	}
 
+	public List<House> getTrendingHouses() {
+		return houseRepository.findByAttributesDescRatingTop5();
+	}
+
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
 		House house = houseRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException(HOUSE_NOT_FOUND + id));
@@ -128,7 +132,7 @@ public class HouseService {
 	}
 
 	public List<String> getAllCities() {
-		return houseRepository.findAllCities();
+		return houseRepository.findAllHouses();
 	}
 
 	public House getHouse(long id) throws ResourceNotFoundException {

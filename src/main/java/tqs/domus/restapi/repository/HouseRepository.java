@@ -51,6 +51,9 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 										   @Param("maxPrice") Double maxPrice);
 
 	@Query("SELECT DISTINCT h.city FROM House h")
-	List<String> findAllCities();
+	List<String> findAllHouses();
+
+	@Query(nativeQuery = true, value = "SELECT * FROM House ORDER BY average_rating DESC LIMIT 5")
+	List<House> findByAttributesDescRatingTop5();
 }
 

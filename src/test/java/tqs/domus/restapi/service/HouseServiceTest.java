@@ -338,7 +338,7 @@ public class HouseServiceTest {
 
 	@Test
 	void testGetAllCities_isEmpty() {
-		when(repository.findAllCities()).thenReturn(Collections.emptyList());
+		when(repository.findAllHouses()).thenReturn(Collections.emptyList());
 		assertThat(service.getAllCities(), is(empty()));
 	}
 
@@ -348,7 +348,7 @@ public class HouseServiceTest {
 		cities.add("Aveiro");
 		cities.add("Viseu");
 
-		when(repository.findAllCities()).thenReturn(cities);
+		when(repository.findAllHouses()).thenReturn(cities);
 
 		List<String> result = service.getAllCities();
 
