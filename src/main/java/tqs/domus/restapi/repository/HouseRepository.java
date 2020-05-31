@@ -53,7 +53,6 @@ public interface HouseRepository extends JpaRepository<House, Long> {
 	@Query("SELECT DISTINCT h.city FROM House h")
 	List<String> findAllHouses();
 
-	@Query(nativeQuery = true, value = "SELECT * FROM House ORDER BY average_rating DESC LIMIT 5")
-	List<House> findByAttributesDescRatingTop5();
+	List<House> findTop5ByOrderByAverageRatingDesc();
 }
 

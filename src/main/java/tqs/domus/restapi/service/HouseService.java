@@ -73,7 +73,7 @@ public class HouseService {
 	}
 
 	public List<House> getTrendingHouses() {
-		return houseRepository.findByAttributesDescRatingTop5();
+		return houseRepository.findTop5ByOrderByAverageRatingDesc();
 	}
 
 	public House updateHouse(long id, HouseDTO houseDTO) throws ResourceNotFoundException {
