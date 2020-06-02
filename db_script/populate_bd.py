@@ -91,7 +91,7 @@ def main(base_url):
             "propertyFeatures": "Wi-Fi;Vacuum cleaner;Washing machine;Balcony", "photos": house_photos, "locador": {"id": locador_2_id}}
     house_8_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
-    house_photos = [HOUSE_9_PHOTO_1, HOUSE_9_PHOTO_2, HOUSE_9_PHOTO_3]
+    house_photos = [HOUSE_9_PHOTO_1, HOUSE_9_PHOTO_3]
     data = {"street": "R. do Palacio do Gelo nº 3", "city": "Viseu", "postalCode": "3504-526", "noRooms": 1, "noBathrooms": 1, "noGarages": 0, "habitableArea": 50, "available": True, "price": 140, "name": "T1 Viseu",
             "description": "Arrendo quarto individual mobilado a estudante em apartamento no centro da cidade, próximo da Universidade Católica, Escola Superior dentária, Escola Superior de Enfermagem. (3 minutos a pé) e da ESEV (7 minutos a pé). A 2 minutos do Rossio. Disponível a partir de maio.",
             "propertyFeatures": "Wi-Fi;Vacuum cleaner;Washing machine;Balcony", "photos": house_photos, "locador": {"id": locador_4_id}}
@@ -101,7 +101,7 @@ def main(base_url):
     data = {"street": "Rua Antero Quental Coimbra", "city": "Coimbra", "postalCode": "3000-032", "noRooms": 4, "noBathrooms": 3, "noGarages": 1, "habitableArea": 130, "available": True, "price": 400, "name": "Quartos de luxo todas as despesas incluidas em Coimbra",
             "description": "Habitação para estudantes com muita qualidade, conforto e confianca. Casa nova moderna, toda remodelada e equipada. Quarto com excelente qualidade e todos mobilados. Excelentes areas comuns 6 wcs, cozinha, sala de refeições, sala de estudo, sala TV, jardim e estacionamento. Todas despesas incluidas agua, luz, gas, internet wi-fi, TVcabo, limpeza zonas comuns, contrato e recibos. Entre celas e p. República. 2min. A pe da Universidade (polo 1 e polo 3) e hospital.",
             "propertyFeatures": "Wi-Fi;Vacuum cleaner;Washing machine;Balcony;Warm water;Television", "photos": house_photos, "locador": {"id": locador_1_id}}
-    post(url=f"{base_url}/houses", json=data).json()["id"]
+    house_10_id = post(url=f"{base_url}/houses", json=data).json()["id"]
 
     #######################################
     #       ADD HOUSES TO WISHLIST        #
@@ -218,6 +218,10 @@ def main(base_url):
 
     data = {"houseId": house_1_id, "locatarioId": locatario_2_id,
             "comment": "Great house! A lot better than what I was expecting!", "rating": 5.0}
+    post(url=f"{base_url}/houses/reviews", json=data)
+
+    data = {"houseId": house_10_id, "locatarioId": locatario_2_id,
+            "comment": "Great house! A lot better than what I was expecting!", "rating": 4.5}
     post(url=f"{base_url}/houses/reviews", json=data)
 
 
